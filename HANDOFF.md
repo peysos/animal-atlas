@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v3.5**
+**Date of handoff:** 2026-11-06 · **Current version: v3.6**
 
 ## 1. Where the project is
 
@@ -26,7 +26,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**347 taxa / 346 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
+**349 taxa / 348 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -59,8 +59,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 347 · Bad parent indices: 0 · Overlapping card pairs: 0
-#      Only in manual: 0 · Only in D3: 0 · World: 31917 x 4250 · Root: LUCA parent=null
+#    → must print: Manual nodes: 349 · Bad parent indices: 0 · Overlapping card pairs: 0
+#      Only in manual: 0 · Only in D3: 0 · World: 31567 x 4250 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
 ```
@@ -71,10 +71,10 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.5**; next bump = **v3.6**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.5 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.6**; next bump = **v3.7**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.6 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 347 cards / 346 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 349 cards / 348 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -113,9 +113,9 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (347): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 28·clade+a-ext 3·class 30·class+a-ext 2·order 41·order+a-ext 5·phylum 14·subphylum 7·subclass 2·infraclass 3·superorder 2·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
+Current kind+accent census in `S` (349): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 28·clade+a-ext 3·class 32·class+a-ext 2·order 41·order+a-ext 5·phylum 14·subphylum 7·subclass 2·infraclass 3·superorder 2·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
 
-**Open rank questions:** Decapoda, Isopoda and Cirripedia sit directly under Crustacea with no class between; fixing that means adding taxa such as Malacostraca, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla. Osteichthyes is a class holding the classes Actinopterygii and Sarcopterygii.
+**Open rank questions:** Gorillini, Panina and Homo sit directly under Hominidae because the tree has no subfamily Homininae; fixing that means adding a taxon, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla. Osteichthyes is a class holding the classes Actinopterygii and Sarcopterygii.
 
 ## 7. Text/alias conventions
 
@@ -167,6 +167,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v3.6 (2026-11-06)** — 2 new taxa, now 349: classes Malacostraca and Thecostraca under Crustacea. Decapoda and Isopoda moved under Malacostraca, Cirripedia under Thecostraca. Layout changed, so the card world is now 31567 x 4250.
 - **v3.5 (2026-11-06)** — Gorillinae renamed Gorillini (still a tribe; its internal `S` id stays `gorillinae`, and "gorillinae" remains a search alias).
 - **v3.4 (2026-11-06)** — 16 rank corrections: Reptilia and Cyclostomata to clade; Onychophora and Tardigrada to phylum; Tunicata and Cephalochordata to subphylum; Asteroidea to class; Nudibranchia to order; Mysticeti, Odontoceti and Sauropoda to suborder; new ranks superorder (Selachii, Batoidea) and infraclass (Monotremata, Marsupialia, Placentalia). Card site now shows Bacteria/Archaea/Eukaryota as domain and Plantae/Fungi as kingdom, with a new domain color on both sites.
 - **v3.3 (2026-11-06)** — all 50 `vertebrate` rows moved to true ranks: 1 phylum (Chordata), 1 subphylum (Vertebrata), 8 classes, 29 orders, 2 suborders (new rank: Lacertilia, Serpentes), 9 clades (including Cetacea, Dinosauria, Theropoda, Maniraptora). Subphylum, subclass, suborder, subfamily, tribe and subtribe got their own colors. New Colors button and popup on both sites.
