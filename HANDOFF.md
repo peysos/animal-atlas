@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v3.0**
+**Date of handoff:** 2026-11-06 · **Current version: v3.1**
 
 ## 1. Where the project is
 
@@ -71,8 +71,8 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 on every user-requested change** → currently **v3.0**; next bump = **v3.1**. If the user says "fold this into the current version" / "keep this in 3.0", don't bump — extend the current changelog section instead.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.0 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 on every user-requested change** → currently **v3.1**; next bump = **v3.2**. If the user says "fold this into the current version" / "keep this in 3.1", don't bump — extend the current changelog section instead.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.1 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 347 cards / 346 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
@@ -88,7 +88,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 | kingdom | kingdom | #ffd54f | #4a3d12 | #ffd54f | Plantae, Fungi |
 | phylum / subphylum | phylum / subphylum | #7fd4ff lt blue | #16425c | #7fd4ff | subphylum inherits blue |
 | class / subclass | class / subclass | #9be89b lt green | #1d4a25 | #9be89b | |
-| order | order | #ffb26b lt orange | #52341a | #ffb26b | no rows yet, styling ready |
+| order | order | #ffb26b lt orange | #52341a | #ffb26b | |
 | family | family | #ff9ecb pink | #55263f | #ff9ecb | cards 104px wide, 1px border |
 | genus/tribe/subtribe/subfamily | self-named | #cfd6d3 lt grey | #3e4a47 | #cfd6d3 | |
 | clade | clade | #d9b48c lt brown | #4a3421 | #d9b48c | |
@@ -98,12 +98,12 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 | blank | taxon | default teal | #1b4842 | #78998e | only LUCA's raw row is blank |
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
-- `a-arth` → **yellow border** (#ffd54f, 2.5px in D3). 26 rows: all arthropod lineages (Hexapoda/Chelicerata/Myriapoda/Crustacea/Rustacea subphyla, Arachnida/Insecta/etc classes, the 11 insect+crustacean orders, Acari/Cirripedia subclasses).
+- `a-arth` → **yellow border** (#ffd54f, 2.5px in D3). **User rule (v3.1): only arthropod sub-ranks get it** (subphylum, subclass, and suborder etc. if ever added). 6 rows: Chelicerata/Crustacea/Hexapoda/Myriapoda subphyla and Acari/Cirripedia subclasses. Arthropod classes and orders carry no accent and show their normal rank color.
 - `a-ext` → **bright red border** (#ff5252, 2.5px in D3; 2px on cards). 52 rows: every extinct entry now carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sphenacodontia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition.
 
-**Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red and arthropod lineages always stay yellow; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
+**Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red and arthropod sub-ranks always stay yellow; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census (347): family 152·family+a-ext 12·vertebrate 50·genus+a-ext 29·clade 30·clade+a-ext 4·class 14·class+a-arth 9·class+a-ext 2·order+a-arth 11·order+a-ext 5·phylum 11·subphylum+a-arth 4·kingdom 2·domain 3·root 1·genus 2·subfamily 1·tribe 1·subtribe 1·subclass+a-arth 2·blank 1 (LUCA).
+Current kind+accent census (347): family 152·family+a-ext 12·vertebrate 50·genus+a-ext 29·clade 30·clade+a-ext 4·class 23·class+a-ext 2·order 11·order+a-ext 5·phylum 11·subphylum+a-arth 4·kingdom 2·domain 3·root 1·genus 2·subfamily 1·tribe 1·subtribe 1·subclass+a-arth 2·blank 1 (LUCA).
 
 ## 7. Text/alias conventions
 
@@ -155,6 +155,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v3.1 (2026-11-06)** — yellow `a-arth` border limited to arthropod sub-ranks (4 subphyla, 2 subclasses); the 9 classes and 11 orders that had it now show their normal rank colors.
 - **v3.0 (2026-11-06)** — borders keep their color when clicked (extinct stay red, arthropod lineages stay yellow, all others keep their rank color); the selected entry gets a soft white glow. Replaces the v2.9 white-on-click behavior.
 - **v2.9 (2026-11-06)** — clicking any entry turns its border white on both sites (the D3 site previously had no click handling). Hover no longer changes border color on the card site; family cards get a 2px border while selected.
 - **v2.8 (2026-11-06)** — color-coded ranks (borders + dark tinted backgrounds, light text kept). All 52 extinct rows re-ranked to true ranks + `a-ext` red border; all 26 arthropod lineages re-ranked + `a-arth` yellow border; new rank kinds subphylum/subclass; changelog entries extended in both files (fold-in, no bump per user).
