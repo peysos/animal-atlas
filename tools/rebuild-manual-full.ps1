@@ -43,14 +43,14 @@ foreach ($n in $nodes) {
 }
 
 # ---------- display metadata ----------
-$kindMap = @{ 'root'='animal'; 'clade'='clade'; 'vertebrate'='vert'; 'arthropod'='arth'; 'family'='family'; 'fossil'='fossil'; 'domain'='domain'; 'kingdom'='kingdom'; 'phylum'='phylum'; 'class'='class'; 'order'='order'; 'genus'='genus'; 'tribe'='tribe'; 'subtribe'='subtribe'; 'subfamily'='subfamily'; 'subphylum'='subphylum'; 'subclass'='subclass'; 'suborder'='suborder'; ''='' }
+$kindMap = @{ 'root'='animal'; 'clade'='clade'; 'vertebrate'='vert'; 'arthropod'='arth'; 'family'='family'; 'fossil'='fossil'; 'domain'='domain'; 'kingdom'='kingdom'; 'phylum'='phylum'; 'class'='class'; 'order'='order'; 'genus'='genus'; 'tribe'='tribe'; 'subtribe'='subtribe'; 'subfamily'='subfamily'; 'subphylum'='subphylum'; 'subclass'='subclass'; 'suborder'='suborder'; 'superorder'='superorder'; 'infraclass'='infraclass'; ''='' }
 $overrides = @{
   life = @{ title='LUCA'; subtitle='last universal common ancestor'; kind='outside' }
-  bacteria = @{ title='Bacteria'; subtitle='domain'; kind='outside' }
-  archaea = @{ title='Archaea'; subtitle='domain'; kind='outside' }
-  euk = @{ title='Eukaryota'; subtitle='domain, arising from Archaea'; kind='outside' }
-  plantae = @{ title='Plantae'; subtitle='plants'; kind='outside' }
-  fungi = @{ title='Fungi'; subtitle='fungi'; kind='outside' }
+  bacteria = @{ title='Bacteria'; subtitle='domain'; kind='domain' }
+  archaea = @{ title='Archaea'; subtitle='domain'; kind='domain' }
+  euk = @{ title='Eukaryota'; subtitle='domain, arising from Archaea'; kind='domain' }
+  plantae = @{ title='Plantae'; subtitle='plants'; kind='kingdom' }
+  fungi = @{ title='Fungi'; subtitle='fungi'; kind='kingdom' }
   'other-euk' = @{ title='Other eukaryotes'; subtitle='protist lineages'; kind='outside' }
   animalia = @{ title='Animalia / Metazoa'; subtitle='kingdom - multicellular animals'; kind='animal' }
 }

@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v3.3**
+**Date of handoff:** 2026-11-06 · **Current version: v3.4**
 
 ## 1. Where the project is
 
@@ -71,27 +71,29 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.3**; next bump = **v3.4**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.3 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.4**; next bump = **v3.5**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.4 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 347 cards / 346 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
-## 6. Rank & color system (v3.3)
+## 6. Rank & color system (v3.4)
 
-**Colors button:** `#legBtn` in the header opens the `#leg` popup, which lists every color. Its rows are a `rows` array after `insertAdjacentHTML('beforeend',CHG)` in each file. **If a rank color changes, update that array in both files too.** The first row differs per site (Domain on D3, Context on cards).
+**Colors button:** `#legBtn` in the header opens the `#leg` popup, which lists every color. Its rows are a `rows` array after `insertAdjacentHTML('beforeend',CHG)` in each file. **If a rank color changes, update that array in both files too.** The second row differs per site (No rank on D3, Context on cards).
 
 Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 | kind | display word | card border | card bg | D3 stroke | Notes |
 |---|---|---|---|---|---|
 | root | kingdom | #ffd54f yellow | #4a3d12 | #ffd54f | Animalia only |
-| domain | domain | (context on cards) | — | default | Bacteria/Archaea/Eukaryota (D3 neutral colors; cards are gray `outside`) |
+| domain | domain | #f2f6fa ice white | #2b3a52 | #f2f6fa | Bacteria/Archaea/Eukaryota, same on both sites |
 | kingdom | kingdom | #ffd54f | #4a3d12 | #ffd54f | Plantae, Fungi |
 | phylum | phylum | #7fd4ff lt blue | #16425c | #7fd4ff | |
 | subphylum | subphylum | #a9b4ff periwinkle | #262c66 | #a9b4ff | |
 | class | class | #9be89b lt green | #1d4a25 | #9be89b | |
 | subclass | subclass | #5fe0c0 teal | #134a40 | #5fe0c0 | |
+| infraclass | infraclass | #c5f2a0 pale lime | #35501f | #c5f2a0 | Monotremata, Marsupialia, Placentalia; also in the rebuild `$kindMap` |
+| superorder | superorder | #ffd6a8 peach | #5e4526 | #ffd6a8 | Selachii, Batoidea; also in the rebuild `$kindMap` |
 | order | order | #ffb26b lt orange | #52341a | #ffb26b | |
 | suborder | suborder | #ff9478 salmon | #5a2c1f | #ff9478 | Serpentes, Lacertilia; also in the rebuild `$kindMap` |
 | family | family | #ff9ecb pink | #55263f | #ff9ecb | cards 104px wide, 1px border |
@@ -102,7 +104,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 | clade | clade | #d9b48c lt brown | #4a3421 | #d9b48c | |
 | vertebrate | vertebrate | #9be89b lt green | #1e4d33 | #9be89b | legacy; 0 rows remain (converted to true ranks in v3.3). Don't use: it hides the real rank |
 | arthropod | arthropod | #d69bd4 purple | #59365a | #d69bd4 | legacy; 0 rows remain (converted to ranks in v2.8) |
-| outside | context | var(--life) grey | #41504b | — | LUCA/Bacteria/Archaea/Eukaryota (+Plantae/Fungi forced by rebuild `$overrides`) |
+| outside | context | var(--life) grey | #41504b | — | Card site only: LUCA and Other eukaryotes, forced by rebuild `$overrides` |
 | blank | taxon | default teal | #1b4842 | #78998e | only LUCA's raw row is blank |
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
@@ -111,7 +113,9 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (347): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 39·clade+a-ext 4·class 31·class+a-ext 2·order 40·order+a-ext 5·phylum 12·subphylum 5·subclass 2·suborder 2·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
+Current kind+accent census in `S` (347): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 28·clade+a-ext 3·class 30·class+a-ext 2·order 41·order+a-ext 5·phylum 14·subphylum 7·subclass 2·infraclass 3·superorder 2·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
+
+**Open rank questions:** Gorillinae is labelled tribe but keeps its name (user's call; the usual tribe name is Gorillini). Decapoda, Isopoda and Cirripedia sit directly under Crustacea with no class between; fixing that means adding taxa such as Malacostraca, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla. Osteichthyes is a class holding the classes Actinopterygii and Sarcopterygii.
 
 ## 7. Text/alias conventions
 
@@ -156,13 +160,14 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 3. **Last S row / template backtick:** Erinaceidae (last row) once had the closing backtick glued to its kind → cards showed "taxon". The rebuild does `.TrimEnd('`')` — keep that.
 4. **Editing `S` rows:** rows are unique by `id|parent|title` — build replaces from the FULL old row text, or use the `(?<=[;\`])` row-boundary lookbehind (`insecta` appears as both id and parent).
 5. **Rebuild validation regex** reads generated rows as `\['..','..','kind',x,y,parent(,'accent')?\]` — if you add more D fields, patch that regex too (`$rx` in rebuild-manual-full.ps1).
-6. **`$overrides`** in the rebuild force card-page data for LUCA/Bacteria/Archaea/Eukaryota/Plantae/Fungi/Animalia/other-euk (context tones, "Animalia / Metazoa"). Subtitle/kind edits to those 8 rows belong in the overrides, not just S.
+6. **`$overrides`** in the rebuild force card-page data for LUCA/Bacteria/Archaea/Eukaryota/Plantae/Fungi/Animalia/other-euk (since v3.4 only LUCA and other-euk use the grey `outside` tone; "Animalia / Metazoa" naming). Subtitle/kind edits to those 8 rows belong in the overrides, not just S.
 7. D3 node widths come from `measureText` + a †-prefix condition — if you conditionally render prefixes, keep the width calc in sync or world size changes.
 8. The card file's `c.title` tooltip uses `n[0]+': '+n[1]` and clicking sets `.active` on one card at a time; keep working.
 9. **PowerShell functions return everything they print.** A helper that prints a status string and then returns text hands back both, and writing that result puts the status text at the top of the file. Use `Write-Host` for messages inside such helpers, and check that the file still starts with `<!doctype html>` before moving on.
 
 ## 10. Version history
 
+- **v3.4 (2026-11-06)** — 16 rank corrections: Reptilia and Cyclostomata to clade; Onychophora and Tardigrada to phylum; Tunicata and Cephalochordata to subphylum; Asteroidea to class; Nudibranchia to order; Mysticeti, Odontoceti and Sauropoda to suborder; new ranks superorder (Selachii, Batoidea) and infraclass (Monotremata, Marsupialia, Placentalia). Card site now shows Bacteria/Archaea/Eukaryota as domain and Plantae/Fungi as kingdom, with a new domain color on both sites.
 - **v3.3 (2026-11-06)** — all 50 `vertebrate` rows moved to true ranks: 1 phylum (Chordata), 1 subphylum (Vertebrata), 8 classes, 29 orders, 2 suborders (new rank: Lacertilia, Serpentes), 9 clades (including Cetacea, Dinosauria, Theropoda, Maniraptora). Subphylum, subclass, suborder, subfamily, tribe and subtribe got their own colors. New Colors button and popup on both sites.
 - **v3.2 (2026-11-06)** — yellow `a-arth` border removed entirely, data and CSS; the 4 subphyla and 2 subclasses that still had it now show their normal rank colors. Extinct border changed from #ff5252 to pure red #ff0000 (no bump, under the new version rule).
 - **v3.1 (2026-11-06)** — yellow `a-arth` border limited to arthropod sub-ranks (4 subphyla, 2 subclasses); the 9 classes and 11 orders that had it now show their normal rank colors.
