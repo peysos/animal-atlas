@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v2.8**
+**Date of handoff:** 2026-11-06 · **Current version: v2.9**
 
 ## 1. Where the project is
 
@@ -71,8 +71,8 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 on every user-requested change** → currently **v2.8**; next bump = **v2.9**. If the user says "fold this into the current version" / "keep this in 2.8", don't bump — extend the current changelog section instead.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before `v2.8 —`.
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 on every user-requested change** → currently **v2.9**; next bump = **v3.0**. If the user says "fold this into the current version" / "keep this in 2.9", don't bump — extend the current changelog section instead.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v2.9 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 347 cards / 346 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
@@ -100,6 +100,8 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
 - `a-arth` → **yellow border** (#ffd54f, 2.5px in D3). 26 rows: all arthropod lineages (Hexapoda/Chelicerata/Myriapoda/Crustacea/Rustacea subphyla, Arachnida/Insecta/etc classes, the 11 insect+crustacean orders, Acari/Cirripedia subclasses).
 - `a-ext` → **bright red border** (#ff5252, 2.5px in D3; 2px on cards). 52 rows: every extinct entry now carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sphenacodontia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition.
+
+**Click behavior (v2.9, both sites):** clicking an entry adds `.active`, which turns its border white. It stays white until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` also forces a 2px border so 1px family cards show the white. D3 site: `G.on('click',…)` plus `.n.active rect`.
 
 Current kind+accent census (347): family 152·family+a-ext 12·vertebrate 50·genus+a-ext 29·clade 30·clade+a-ext 4·class 14·class+a-arth 9·class+a-ext 2·order+a-arth 11·order+a-ext 5·phylum 11·subphylum+a-arth 4·kingdom 2·domain 3·root 1·genus 2·subfamily 1·tribe 1·subtribe 1·subclass+a-arth 2·blank 1 (LUCA).
 
@@ -148,10 +150,12 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 5. **Rebuild validation regex** reads generated rows as `\['..','..','kind',x,y,parent(,'accent')?\]` — if you add more D fields, patch that regex too (`$rx` in rebuild-manual-full.ps1).
 6. **`$overrides`** in the rebuild force card-page data for LUCA/Bacteria/Archaea/Eukaryota/Plantae/Fungi/Animalia/other-euk (context tones, "Animalia / Metazoa"). Subtitle/kind edits to those 8 rows belong in the overrides, not just S.
 7. D3 node widths come from `measureText` + a †-prefix condition — if you conditionally render prefixes, keep the width calc in sync or world size changes.
-8. The card file's `c.title` tooltip uses `n[0]+': '+n[1]` and click-highlight toggles `.active` — untouched since v1; keep working.
+8. The card file's `c.title` tooltip uses `n[0]+': '+n[1]` and clicking sets `.active` on one card at a time; keep working.
+9. **PowerShell functions return everything they print.** A helper that prints a status string and then returns text hands back both, and writing that result puts the status text at the top of the file. Use `Write-Host` for messages inside such helpers, and check that the file still starts with `<!doctype html>` before moving on.
 
 ## 10. Version history
 
+- **v2.9 (2026-11-06)** — clicking any entry turns its border white on both sites (the D3 site previously had no click handling). Hover no longer changes border color on the card site; family cards get a 2px border while selected.
 - **v2.8 (2026-11-06)** — color-coded ranks (borders + dark tinted backgrounds, light text kept). All 52 extinct rows re-ranked to true ranks + `a-ext` red border; all 26 arthropod lineages re-ranked + `a-arth` yellow border; new rank kinds subphylum/subclass; changelog entries extended in both files (fold-in, no bump per user).
 - **v2.7 (2026-11-06)** — Arthropoda re-ranked from lineage `arthropod` → `phylum` (user caught it). Snapshot backed up to `backups\` right after this (that backup therefore contains v2.7 badge but pre-v2.8 styling).
 - **v2.6 (2026-11-05)** — accuracy pass: dinosaurs de-fossilized (birds inside; "birds included"), Elasmosaurus → own family Elasmosauridae, rank sweep (domain/kingdom/phylum/class + hominid tribe/subtribe/subfamily/genus fixes), "extinct" wording added to Therapsida/Sphenacodontia/Mammuthus, ~24 duplicate subtitles differentiated, Parazoa "sponge-grade", elbow-path connectors (kills line-through-card), search rank words, alias Mollusca/Elasmosauridae. Record of all 68 row edits: `tools\transform-v26.ps1`.
