@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v3.4**
+**Date of handoff:** 2026-11-06 · **Current version: v3.5**
 
 ## 1. Where the project is
 
@@ -71,8 +71,8 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.4**; next bump = **v3.5**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.4 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.5**; next bump = **v3.6**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.5 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 347 cards / 346 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
@@ -115,7 +115,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 Current kind+accent census in `S` (347): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 28·clade+a-ext 3·class 30·class+a-ext 2·order 41·order+a-ext 5·phylum 14·subphylum 7·subclass 2·infraclass 3·superorder 2·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
 
-**Open rank questions:** Gorillinae is labelled tribe but keeps its name (user's call; the usual tribe name is Gorillini). Decapoda, Isopoda and Cirripedia sit directly under Crustacea with no class between; fixing that means adding taxa such as Malacostraca, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla. Osteichthyes is a class holding the classes Actinopterygii and Sarcopterygii.
+**Open rank questions:** Decapoda, Isopoda and Cirripedia sit directly under Crustacea with no class between; fixing that means adding taxa such as Malacostraca, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla. Osteichthyes is a class holding the classes Actinopterygii and Sarcopterygii.
 
 ## 7. Text/alias conventions
 
@@ -167,6 +167,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v3.5 (2026-11-06)** — Gorillinae renamed Gorillini (still a tribe; its internal `S` id stays `gorillinae`, and "gorillinae" remains a search alias).
 - **v3.4 (2026-11-06)** — 16 rank corrections: Reptilia and Cyclostomata to clade; Onychophora and Tardigrada to phylum; Tunicata and Cephalochordata to subphylum; Asteroidea to class; Nudibranchia to order; Mysticeti, Odontoceti and Sauropoda to suborder; new ranks superorder (Selachii, Batoidea) and infraclass (Monotremata, Marsupialia, Placentalia). Card site now shows Bacteria/Archaea/Eukaryota as domain and Plantae/Fungi as kingdom, with a new domain color on both sites.
 - **v3.3 (2026-11-06)** — all 50 `vertebrate` rows moved to true ranks: 1 phylum (Chordata), 1 subphylum (Vertebrata), 8 classes, 29 orders, 2 suborders (new rank: Lacertilia, Serpentes), 9 clades (including Cetacea, Dinosauria, Theropoda, Maniraptora). Subphylum, subclass, suborder, subfamily, tribe and subtribe got their own colors. New Colors button and popup on both sites.
 - **v3.2 (2026-11-06)** — yellow `a-arth` border removed entirely, data and CSS; the 4 subphyla and 2 subclasses that still had it now show their normal rank colors. Extinct border changed from #ff5252 to pure red #ff0000 (no bump, under the new version rule).
