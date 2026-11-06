@@ -71,7 +71,7 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 on every user-requested change** → currently **v3.2**; next bump = **v3.3**. If the user says "fold this into the current version" / "keep this in 3.2", don't bump — extend the current changelog section instead.
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.2**; next bump = **v3.3**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
 3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.2 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 347 cards / 346 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
@@ -99,7 +99,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
 - `a-arth` → **removed in v3.2 at the user's request** (0 rows, CSS deleted). Arthropods have no special border and show their normal rank colors. Don't re-add it unless asked.
-- `a-ext` → **bright red border** (#ff5252, 2.5px in D3; 2px on cards). 52 rows: every extinct entry now carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sphenacodontia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition.
+- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 52 rows: every extinct entry now carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sphenacodontia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition.
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
@@ -155,7 +155,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
-- **v3.2 (2026-11-06)** — yellow `a-arth` border removed entirely, data and CSS; the 4 subphyla and 2 subclasses that still had it now show their normal rank colors.
+- **v3.2 (2026-11-06)** — yellow `a-arth` border removed entirely, data and CSS; the 4 subphyla and 2 subclasses that still had it now show their normal rank colors. Extinct border changed from #ff5252 to pure red #ff0000 (no bump, under the new version rule).
 - **v3.1 (2026-11-06)** — yellow `a-arth` border limited to arthropod sub-ranks (4 subphyla, 2 subclasses); the 9 classes and 11 orders that had it now show their normal rank colors.
 - **v3.0 (2026-11-06)** — borders keep their color when clicked (extinct stay red, arthropod lineages stay yellow, all others keep their rank color); the selected entry gets a soft white glow. Replaces the v2.9 white-on-click behavior.
 - **v2.9 (2026-11-06)** — clicking any entry turns its border white on both sites (the D3 site previously had no click handling). Hover no longer changes border color on the card site; family cards get a 2px border while selected.
