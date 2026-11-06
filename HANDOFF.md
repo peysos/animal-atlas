@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v3.2**
+**Date of handoff:** 2026-11-06 · **Current version: v3.3**
 
 ## 1. Where the project is
 
@@ -71,13 +71,15 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.2**; next bump = **v3.3**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.2 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.3**; next bump = **v3.4**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.3 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 347 cards / 346 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
-## 6. Rank & color system (v2.8)
+## 6. Rank & color system (v3.3)
+
+**Colors button:** `#legBtn` in the header opens the `#leg` popup, which lists every color. Its rows are a `rows` array after `insertAdjacentHTML('beforeend',CHG)` in each file. **If a rank color changes, update that array in both files too.** The first row differs per site (Domain on D3, Context on cards).
 
 Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
@@ -86,13 +88,19 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 | root | kingdom | #ffd54f yellow | #4a3d12 | #ffd54f | Animalia only |
 | domain | domain | (context on cards) | — | default | Bacteria/Archaea/Eukaryota (D3 neutral colors; cards are gray `outside`) |
 | kingdom | kingdom | #ffd54f | #4a3d12 | #ffd54f | Plantae, Fungi |
-| phylum / subphylum | phylum / subphylum | #7fd4ff lt blue | #16425c | #7fd4ff | subphylum inherits blue |
-| class / subclass | class / subclass | #9be89b lt green | #1d4a25 | #9be89b | |
+| phylum | phylum | #7fd4ff lt blue | #16425c | #7fd4ff | |
+| subphylum | subphylum | #a9b4ff periwinkle | #262c66 | #a9b4ff | |
+| class | class | #9be89b lt green | #1d4a25 | #9be89b | |
+| subclass | subclass | #5fe0c0 teal | #134a40 | #5fe0c0 | |
 | order | order | #ffb26b lt orange | #52341a | #ffb26b | |
+| suborder | suborder | #ff9478 salmon | #5a2c1f | #ff9478 | Serpentes, Lacertilia; also in the rebuild `$kindMap` |
 | family | family | #ff9ecb pink | #55263f | #ff9ecb | cards 104px wide, 1px border |
-| genus/tribe/subtribe/subfamily | self-named | #cfd6d3 lt grey | #3e4a47 | #cfd6d3 | |
+| subfamily | subfamily | #d69bd4 purple | #59365a | #d69bd4 | |
+| tribe | tribe | #8fb8c9 steel blue | #2c4650 | #8fb8c9 | |
+| subtribe | subtribe | #b5d2dc lt steel | #38535c | #b5d2dc | |
+| genus | genus | #cfd6d3 lt grey | #3e4a47 | #cfd6d3 | |
 | clade | clade | #d9b48c lt brown | #4a3421 | #d9b48c | |
-| vertebrate | vertebrate | #9be89b lt green | #1e4d33 | #9be89b | lineage color, not a rank claim |
+| vertebrate | vertebrate | #9be89b lt green | #1e4d33 | #9be89b | legacy; 0 rows remain (converted to true ranks in v3.3). Don't use: it hides the real rank |
 | arthropod | arthropod | #d69bd4 purple | #59365a | #d69bd4 | legacy; 0 rows remain (converted to ranks in v2.8) |
 | outside | context | var(--life) grey | #41504b | — | LUCA/Bacteria/Archaea/Eukaryota (+Plantae/Fungi forced by rebuild `$overrides`) |
 | blank | taxon | default teal | #1b4842 | #78998e | only LUCA's raw row is blank |
@@ -103,7 +111,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census (347): family 152·family+a-ext 12·vertebrate 50·genus+a-ext 29·clade 30·clade+a-ext 4·class 23·class+a-ext 2·order 11·order+a-ext 5·phylum 11·subphylum 4·kingdom 2·domain 3·root 1·genus 2·subfamily 1·tribe 1·subtribe 1·subclass 2·blank 1 (LUCA).
+Current kind+accent census in `S` (347): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 39·clade+a-ext 4·class 31·class+a-ext 2·order 40·order+a-ext 5·phylum 12·subphylum 5·subclass 2·suborder 2·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
 
 ## 7. Text/alias conventions
 
@@ -155,6 +163,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v3.3 (2026-11-06)** — all 50 `vertebrate` rows moved to true ranks: 1 phylum (Chordata), 1 subphylum (Vertebrata), 8 classes, 29 orders, 2 suborders (new rank: Lacertilia, Serpentes), 9 clades (including Cetacea, Dinosauria, Theropoda, Maniraptora). Subphylum, subclass, suborder, subfamily, tribe and subtribe got their own colors. New Colors button and popup on both sites.
 - **v3.2 (2026-11-06)** — yellow `a-arth` border removed entirely, data and CSS; the 4 subphyla and 2 subclasses that still had it now show their normal rank colors. Extinct border changed from #ff5252 to pure red #ff0000 (no bump, under the new version rule).
 - **v3.1 (2026-11-06)** — yellow `a-arth` border limited to arthropod sub-ranks (4 subphyla, 2 subclasses); the 9 classes and 11 orders that had it now show their normal rank colors.
 - **v3.0 (2026-11-06)** — borders keep their color when clicked (extinct stay red, arthropod lineages stay yellow, all others keep their rank color); the selected entry gets a soft white glow. Replaces the v2.9 white-on-click behavior.

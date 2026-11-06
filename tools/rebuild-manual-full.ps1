@@ -43,7 +43,7 @@ foreach ($n in $nodes) {
 }
 
 # ---------- display metadata ----------
-$kindMap = @{ 'root'='animal'; 'clade'='clade'; 'vertebrate'='vert'; 'arthropod'='arth'; 'family'='family'; 'fossil'='fossil'; 'domain'='domain'; 'kingdom'='kingdom'; 'phylum'='phylum'; 'class'='class'; 'order'='order'; 'genus'='genus'; 'tribe'='tribe'; 'subtribe'='subtribe'; 'subfamily'='subfamily'; 'subphylum'='subphylum'; 'subclass'='subclass'; ''='' }
+$kindMap = @{ 'root'='animal'; 'clade'='clade'; 'vertebrate'='vert'; 'arthropod'='arth'; 'family'='family'; 'fossil'='fossil'; 'domain'='domain'; 'kingdom'='kingdom'; 'phylum'='phylum'; 'class'='class'; 'order'='order'; 'genus'='genus'; 'tribe'='tribe'; 'subtribe'='subtribe'; 'subfamily'='subfamily'; 'subphylum'='subphylum'; 'subclass'='subclass'; 'suborder'='suborder'; ''='' }
 $overrides = @{
   life = @{ title='LUCA'; subtitle='last universal common ancestor'; kind='outside' }
   bacteria = @{ title='Bacteria'; subtitle='domain'; kind='outside' }
