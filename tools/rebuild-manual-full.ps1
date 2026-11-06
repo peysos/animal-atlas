@@ -115,7 +115,7 @@ $bx0 = $margin - 70
 $by0 = $margin - 40
 $bx1 = $maxX + 70
 $by1 = $maxY + 40
-$fit = "function fitView(){let vw=view.clientWidth,vh=view.clientHeight,bw=$bx1-$bx0,bh=$by1-$by0;s=Math.max(.02,Math.min((vw-70)/bw,(vh-70)/bh,.8));x=(vw-bw*s)/2-($bx0)*s;y=(vh-bh*s)/2-($by0)*s;draw()}function resetView"
+$fit = "function fitView(){let vw=view.clientWidth,vh=view.clientHeight,bw=$bx1-$bx0,bh=$by1-$by0;s=Math.max(.005,Math.min((vw-70)/bw,(vh-70)/bh,.8));x=(vw-bw*s)/2-($bx0)*s;y=(vh-bh*s)/2-($by0)*s;draw()}function resetView"
 $new = [regex]::Replace($new, 'function fitView\(\)\{[^}]*\}function resetView', $fit)
 
 # header
