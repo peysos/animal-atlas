@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $utf8 = New-Object System.Text.UTF8Encoding($false)
-$D3 = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animaltree\full-animal-tree.html'
-$CARD = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animaltree\animal-evolution-tree.html'
+$D3 = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animal Atlas\full-animal-tree.html'
+$CARD = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animal Atlas\animal-evolution-tree.html'
 $RB = 'C:\Users\pkepe\AppData\Local\Temp\opencode\rebuild-manual-full.ps1'
 $bt = [char]96  # backtick (first row of S template)
 

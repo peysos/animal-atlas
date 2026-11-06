@@ -5,7 +5,7 @@
 ## 1. Where the project is
 
 ```
-C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animaltree\
+C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animal Atlas\
 ```
 
 | File | What it is |

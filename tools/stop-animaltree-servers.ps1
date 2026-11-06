@@ -8,7 +8,7 @@ $count = 0
 foreach ($p in $procs) {
   try { Stop-Process -Id $p.ProcessId -Force; $count++ } catch {}
 }
-$positions = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animaltree\positions.json'
+$positions = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animal Atlas\positions.json'
 if (Test-Path $positions) { Remove-Item $positions -Force }
 "Stopped $count preview server process(es)."
 "positions.json removed: $(-not (Test-Path $positions))"

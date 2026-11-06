@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$root = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animaltree'
+$root = 'C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animal Atlas'
 $d3Path = Join-Path $root 'full-animal-tree.html'
 $manualPath = Join-Path $root 'animal-evolution-tree.html'
 $posPath = Join-Path $root 'positions.json'
