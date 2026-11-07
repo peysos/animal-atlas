@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v3.7**
+**Date of handoff:** 2026-11-06 · **Current version: v3.8**
 
 ## 1. Where the project is
 
@@ -60,7 +60,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
 #    → must print: Manual nodes: 349 · Bad parent indices: 0 · Overlapping card pairs: 0
-#      Only in manual: 0 · Only in D3: 0 · World: 31567 x 4100 · Root: LUCA parent=null
+#      Only in manual: 0 · Only in D3: 0 · World: 31444 x 4250 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
 ```
@@ -71,8 +71,8 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.7**; next bump = **v3.8**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.7 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v3.8**; next bump = **v3.9**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v3.8 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 349 cards / 348 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
@@ -109,13 +109,13 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
 - `a-arth` → **removed in v3.2 at the user's request** (0 rows, CSS deleted). Arthropods have no special border and show their normal rank colors. Don't re-add it unless asked.
-- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 52 rows: every extinct entry now carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sphenacodontia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition.
+- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 49 rows: every extinct entry carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sauropterygia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition. **A group with living descendants must not be marked extinct** (Dinosauria, Therapsida, Cynodontia and Sphenacodontia are "... included" clades instead). Check on the D3 page: `r.descendants().filter(d=>d.data.accent==='a-ext'&&d.descendants().some(x=>x.data.accent!=='a-ext'))` must be empty.
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (349): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 30·clade+a-ext 3·class 30·class+a-ext 2·order 41·order+a-ext 5·phylum 14·subphylum 7·subclass 2·infraclass 3·superorder 2·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
+Current kind+accent census in `S` (349): family 152·family+a-ext 12·genus+a-ext 29·genus 2·clade 33·clade+a-ext 1·class 30·class+a-ext 2·order 41·order+a-ext 4·phylum 14·subphylum 7·subclass 2·infraclass 3·superorder 2·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
 
-**Open rank questions:** Gorillini, Panina and Homo sit directly under Hominidae because the tree has no subfamily Homininae; fixing that means adding a taxon, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla. Crustacea stays a subphylum beside Hexapoda even though it is paraphyletic, and its subtitle says so. Placozoa stays under Parazoa, and its subtitle notes the debate. Animalia's internal kind `root`/`animal` is deliberate: it shows the word "kingdom" and kingdom colors.
+**Open rank questions:** Gorillini, Panina and Homo sit directly under Hominidae because the tree has no subfamily Homininae; fixing that means adding a taxon, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla, and it means crown whales only (Mysticeti + Odontoceti): Pakicetus stays outside it as a stem whale under Cetartiodactyla, at the user's direction. Crustacea stays a subphylum beside Hexapoda even though it is paraphyletic, and its subtitle says so. Placozoa stays under Parazoa, and its subtitle notes the debate. Animalia's internal kind `root`/`animal` is deliberate: it shows the word "kingdom" and kingdom colors.
 
 **Fit to view:** both sites fit the whole tree on load, on resize, and on `pageshow`. The card site's minimum zoom is `.005` in `zoomAt` and in the rebuild's `$fit` line (it was `.02`, which cut off windows under about 700px wide). `resetView` also clears the old zoom target. The logo is `.logo` inside `.brand`; keep it no taller than 44px so the header heights (78px cards, 76px D3) don't change, because D3's `fit()` hard-codes 76.
 
@@ -169,6 +169,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v3.8 (2026-11-06)** — full placement audit of all 349 entries. Pakicetus moved out of Cetacea to Cetartiodactyla. Therapsida, Cynodontia and Sphenacodontia no longer extinct (they include mammals); Therapsida moved under Sphenacodontia and changed from order to clade. Hylonomus moved from Amniota to Sauropsida. 49 extinct rows. Card world now 31444 x 4250.
 - **v3.7 (2026-11-06)** — Cetacea moved under Cetartiodactyla and Pakicetus under Cetacea (reverses the v2.5 link where Cetacea sat under Pakicetus). Osteichthyes and Sarcopterygii to clade. Subtitle notes on Placozoa and Crustacea. Paw logo in the header. Card site fit-to-view fixed for narrow windows. Card world now 31567 x 4100.
 - **v3.6 (2026-11-06)** — 2 new taxa, now 349: classes Malacostraca and Thecostraca under Crustacea. Decapoda and Isopoda moved under Malacostraca, Cirripedia under Thecostraca. Layout changed, so the card world is now 31567 x 4250.
 - **v3.5 (2026-11-06)** — Gorillinae renamed Gorillini (still a tribe; its internal `S` id stays `gorillinae`, and "gorillinae" remains a search alias).
