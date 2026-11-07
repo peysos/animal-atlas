@@ -79,6 +79,8 @@ Notes:
 
 ## 6. Rank & color system (v3.4)
 
+**Color rule (v4.0, user request):** no two ranks may look alike. Every pair of rank border colors differs by at least 20 in CIELAB distance (closest now: phylum/tribe 23.9). Check any new color against all others before using it, and keep light text readable (all boxes are 7.7:1 or better against #eef6ef).
+
 **Colors button:** `#legBtn` in the header opens the `#leg` popup, which lists every color. Its rows are a `rows` array after `insertAdjacentHTML('beforeend',CHG)` in each file. **If a rank color changes, update that array in both files too.** The second row differs per site (No rank on D3, Context on cards).
 
 Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
@@ -88,20 +90,20 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 | root | kingdom | #ffd54f yellow | #4a3d12 | #ffd54f | Animalia only |
 | domain | domain | #f2f6fa ice white | #2b3a52 | #f2f6fa | Bacteria/Archaea/Eukaryota, same on both sites |
 | kingdom | kingdom | #ffd54f | #4a3d12 | #ffd54f | Plantae, Fungi |
-| phylum | phylum | #7fd4ff lt blue | #16425c | #7fd4ff | |
-| subphylum | subphylum | #a9b4ff periwinkle | #262c66 | #a9b4ff | |
-| class | class | #9be89b lt green | #1d4a25 | #9be89b | |
-| subclass | subclass | #5fe0c0 teal | #134a40 | #5fe0c0 | |
-| infraclass | infraclass | #c5f2a0 pale lime | #35501f | #c5f2a0 | Marsupialia, Placentalia; also in the rebuild `$kindMap` |
-| superorder | superorder | #ffd6a8 peach | #5e4526 | #ffd6a8 | Selachii, Batoidea; also in the rebuild `$kindMap` |
-| order | order | #ffb26b lt orange | #52341a | #ffb26b | |
-| suborder | suborder | #ff9478 salmon | #5a2c1f | #ff9478 | Serpentes, Lacertilia; also in the rebuild `$kindMap` |
-| family | family | #ff9ecb pink | #55263f | #ff9ecb | cards 104px wide, 1px border |
-| subfamily | subfamily | #d69bd4 purple | #59365a | #d69bd4 | |
-| tribe | tribe | #8fb8c9 steel blue | #2c4650 | #8fb8c9 | |
-| subtribe | subtribe | #b5d2dc lt steel | #38535c | #b5d2dc | |
-| genus | genus | #cfd6d3 lt grey | #3e4a47 | #cfd6d3 | |
-| clade | clade | #d9b48c lt brown | #4a3421 | #d9b48c | |
+| phylum | phylum | #4fc3f7 sky blue | #0f3d57 | #4fc3f7 | |
+| subphylum | subphylum | #9fa8ff periwinkle | #262c66 | #9fa8ff | |
+| class | class | #7ee07e green | #1d4a25 | #7ee07e | |
+| subclass | subclass | #1de9b6 aqua | #0d4a3c | #1de9b6 | |
+| infraclass | infraclass | #c6ff00 neon lime | #3d4d00 | #c6ff00 | Marsupialia, Placentalia; also in the rebuild `$kindMap` |
+| superorder | superorder | #ffd9a3 pale peach | #5c4520 | #ffd9a3 | Selachii, Batoidea; also in the rebuild `$kindMap` |
+| order | order | #ff8c00 bright orange | #6b3300 | #ff8c00 | |
+| suborder | suborder | #ffa95e light orange | #4a2508 | #ffa95e | Serpentes, Lacertilia, Mysticeti, Odontoceti, Sauropoda; also in the rebuild `$kindMap` |
+| family | family | #ff7eb6 pink | #5a1f3d | #ff7eb6 | cards 104px wide, 1px border |
+| subfamily | subfamily | #b388ff violet | #36205e | #b388ff | |
+| tribe | tribe | #80deea pale cyan | #1f4d53 | #80deea | |
+| subtribe | subtribe | #c5e1a5 sage | #3d4a30 | #c5e1a5 | |
+| genus | genus | #a1887f warm taupe | #3e322c | #a1887f | |
+| clade | clade | #e040fb magenta | #4a1552 | #e040fb | not red: a red "extinct" border would vanish on a red box |
 | vertebrate | vertebrate | #9be89b lt green | #1e4d33 | #9be89b | legacy; 0 rows remain (converted to true ranks in v3.3). Don't use: it hides the real rank |
 | arthropod | arthropod | #d69bd4 purple | #59365a | #d69bd4 | legacy; 0 rows remain (converted to ranks in v2.8) |
 | outside | context | var(--life) grey | #41504b | — | Card site only: LUCA and Other eukaryotes, forced by rebuild `$overrides` |
