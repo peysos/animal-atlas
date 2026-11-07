@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v4.2**
+**Date of handoff:** 2026-11-06 · **Current version: v4.3**
 
 ## 1. Where the project is
 
@@ -26,7 +26,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**662 taxa / 661 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
+**672 taxa / 671 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -59,7 +59,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 662 · Bad parent indices: 0 · Overlapping card pairs: 0
+#    → must print: Manual nodes: 672 · Bad parent indices: 0 · Overlapping card pairs: 0
 #      Only in manual: 0 · Only in D3: 0 · World: 32779 x 4100 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
@@ -71,10 +71,10 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v4.2**; next bump = **v4.3**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.2 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v4.3**; next bump = **v4.4**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.3 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 662 cards / 661 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 672 cards / 671 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -115,7 +115,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (662): family 162·family+a-ext 30·genus 230·genus+a-ext 72·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 51·order+a-ext 7·phylum 14·subphylum 7·subclass 2·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
+Current kind+accent census in `S` (672): family 166·family+a-ext 30·genus 235·genus+a-ext 72·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 52·order+a-ext 7·phylum 14·subphylum 7·subclass 2·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (LUCA).
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
@@ -173,6 +173,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v4.3 (2026-11-07)** - 672 taxa. Added order Tetraodontiformes under Actinopterygii with Tetraodontidae (Takifugu, Tetraodon), Molidae (Mola), Diodontidae (Diodon) and Balistidae (Balistes), with search terms like blowfish, fugu and mola. "Sunfish" here means ocean sunfish; freshwater sunfishes (Centrarchidae) are not in the tree.
 - **v4.2 (2026-11-07)** - interface release, bumped at the user's explicit request (no data change, still 662 taxa). Card site: navigation arrows now on family and context cards (the old `if(k==='family'||k==='outside')return;` skip was removed); arrow tooltips read "Title - common name". Both sites: `sMatch()` search matches each word separately with plural handling (mice, geese, wolves...), whole-phrase matches rank first, new shortcuts t rex / sabertooth / sloth bear / dodo; clicking empty space deselects (card: ignores drags over 5px; D3: node clicks stop propagation and `V.on('click.deselect')`); theme selector `#theme` (teal default, midnight, charcoal, forest, light) sets `data-theme` on `<html>` and is saved in localStorage key `atlasTheme`, shared by both sites. Not in the tree, so no search shortcut: walrus, skunk, ammonite.
 - **v4.1 (2026-11-07)** — 662 taxa. Added 67 reptile/bird entries (Archosauromorpha with Prolacertiformes, Sharovipteryx and Longisquama; Kaprosuchus, Metriorhynchus; Sauropodomorpha with Plateosauridae; Hadrosauridae, Ankylosauridae, Ceratopsidae (+Torosaurus), Stegosauridae; Struthioniformes in the broad ratite sense with ostriches, rheas, cassowaries/emus, kiwis, elephant birds and moas; Cariamiformes with seriemas and terror birds; 9 lizard families/genera incl. Sauromalus, Phelsuma, Eublepharis, Correlophus; Henodontidae, Protostegidae with Archelon, Mesosauria) and 76 mammal entries (Xenarthra with armadillos, Glyptodontidae, sloths, anteaters, Megatheriidae; Pholidota, Sirenia, Tubulidentata, Hyracoidea, Litopterna, Notoungulata; seals, sea lions, hyenas, raccoons, giraffes, lemurs, capuchins, cavies, fruit and vampire bats; extinct megafauna such as Mammut, Coelodonta, Megaloceros, Paraceratherium, Diprotodon, Thylacoleo, Thylacinus, Arctodus, Aenocyon). Removed Cynodontia and 21 repetitive single-child families (user request; Vespertilionidae was removed then restored once other bat families joined it). Families now hot pink. Width-based layout spacing roughly halves tree width. Card world 32779 x 4100. Search box placeholder now reads "Search all N taxa." with N counted live from the data (`S.length` on D3, `D.length` on cards), so it never needs a manual update.
 - **v4.0 (2026-11-06)** — 193 genera added under families (user asked for 0–2 per family, about 1 on average, more where worthwhile), now 542 taxa and 224 genera. All 8 families with no genus were left that way on purpose: Entomobryidae, Acerentomidae, Campodeidae, Ophiuridae, Stichopodidae, Pycnogonidae, Julidae, Didemnidae. **The user wants every added genus listed in the update log.** Each pick was checked against GBIF; 189 of 193 matched as accepted in the expected family, and the other 4 were reviewed (Mobula and Cacatua are GBIF family quirks, Gorgonops is a spelling variant, Branchiostoma led to the rename below). Branchiostomidae renamed Branchiostomatidae (GBIF synonym; `S` id unchanged, old name kept as a search alias). Xiphosura changed from class to order. Gorgonopsidae kept although GBIF prefers Gorgonopidae, because the literature mostly uses Gorgonopsidae. Card world now 46844 x 4250.
