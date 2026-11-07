@@ -106,7 +106,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 | clade | clade | #e040fb magenta | #4a1552 | #e040fb | not red: a red "extinct" border would vanish on a red box |
 | vertebrate | vertebrate | #9be89b lt green | #1e4d33 | #9be89b | legacy; 0 rows remain (converted to true ranks in v3.3). Don't use: it hides the real rank |
 | arthropod | arthropod | #d69bd4 purple | #59365a | #d69bd4 | legacy; 0 rows remain (converted to ranks in v2.8) |
-| outside | context | var(--life) grey | #41504b | — | Card site only: LUCA and Other eukaryotes, forced by rebuild `$overrides` |
+| outside | context | var(--life) = #7b93ad blue-grey | #41504b | — | Card site only: LUCA and Other eukaryotes, forced by rebuild `$overrides`. Was grey #9ba7a0 until the v4.0 color rework, changed because it looked like the taupe genus color |
 | blank | taxon | default teal | #1b4842 | #78998e | only LUCA's raw row is blank |
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
