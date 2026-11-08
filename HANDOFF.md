@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v4.8**
+**Date of handoff:** 2026-11-06 · **Current version: v4.9**
 
 ## 1. Where the project is
 
@@ -26,7 +26,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**770 taxa / 769 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
+**773 taxa / 772 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -59,8 +59,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 770 · Bad parent indices: 0 · Overlapping card pairs: 0
-#      Only in manual: 0 · Only in D3: 0 · World: 35690 x 4250 · Root: LUCA parent=null
+#    → must print: Manual nodes: 773 · Bad parent indices: 0 · Overlapping card pairs: 0
+#      Only in manual: 0 · Only in D3: 0 · World: 35809 x 4250 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
 ```
@@ -71,10 +71,10 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) **changes only when the user says so** (user rule since 2026-11-08; it replaces the older rule that bumped +0.1 for new animals or taxonomic changes) → currently **v4.8**. New animals, taxonomic changes, styling and everything else keep the current version: add a note to the current changelog section instead. When the user asks for a new version, the default is +0.1 (next = **v4.9**) unless they name a number.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.8 &mdash;`).
+2. **Version badge** (`#ver` button in the header) **changes only when the user says so** (user rule since 2026-11-08; it replaces the older rule that bumped +0.1 for new animals or taxonomic changes) → currently **v4.9**. New animals, taxonomic changes, styling and everything else keep the current version: add a note to the current changelog section instead. When the user asks for a new version, the default is +0.1 (next = **v5.0**) unless they name a number.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.9 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 770 cards / 769 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 773 cards / 772 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -115,13 +115,15 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (770): family 183·family+a-ext 36·genus 265·genus+a-ext 96·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 69·order+a-ext 9·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (blank = LUCA).
+Current kind+accent census in `S` (773): family 183·family+a-ext 36·genus 265·genus+a-ext 99·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 69·order+a-ext 9·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (blank = LUCA).
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
 **Open rank questions:** Gorillini, Panina and Homo sit directly under Hominidae because the tree has no subfamily Homininae; fixing that means adding a taxon, so ask first. Cetacea stays a clade because it sits inside the order Cetartiodactyla, and since v4.5 it branches off Pakicetus (Cetartiodactyla > Pakicetus > Cetacea) at the user's direction (the user has also asked for the opposite before; follow the latest request). Pakicetus is drawn as the early whale the living whales grew out of, although strictly it was a side branch. Cetacea holds Mysticeti, Odontoceti and the extinct basilosaurid Perucetus (v4.8). Crustacea stays a subphylum beside Hexapoda even though it is paraphyletic, and its subtitle says so. Placozoa stays under Parazoa, and its subtitle notes the debate. Animalia's internal kind `root`/`animal` is deliberate: it shows the word "kingdom" and kingdom colors.
 
-**Fit to view:** both sites fit the whole tree on load, on resize, and on `pageshow`. The card site's minimum zoom is `.005` in `zoomAt` and in the rebuild's `$fit` line (it was `.02`, which cut off windows under about 700px wide). `resetView` also clears the old zoom target. The logo is `.logo` inside `.brand`; keep it no taller than 44px so the header heights (78px cards, 76px D3) don't change, because D3's `fit()` hard-codes 76.
+**Fit to view:** both sites fit the whole tree on load, on resize, and on `pageshow`. The card site's minimum zoom is `.005` in `zoomAt` and in the rebuild's `$fit` line (it was `.02`, which cut off windows under about 700px wide). `resetView` also clears the old zoom target. The logo is `.logo` inside `.brand`; keep it no taller than 44px so the header heights (78px cards, 76px D3) don't change. Under the header sits the 24px taxa ticker (`#tick`, v4.9), so the tree area is `calc(100vh - 102px)` on cards and `calc(100vh - 100px)` on D3, and D3's `fit()` and ticker jump hard-code `innerHeight-100`. Change all of these together if the header or ticker height changes.
+
+**Taxa ticker (v4.9, both sites):** `<div class="tick" id="tick">` right after `</header>`. `buildTicker(items,jump)` (identical in both files) builds two identical `.tk-run` copies inside `.tk-track` and scrolls it with the CSS animation `tk` (translateX to -50%, so the loop is seamless) at 30px per second (duration = run width / 30, recomputed after fonts load). Items are every `order` and `family` in depth-first tree order (cards: DFS over `D` parents; D3: `r.eachBefore`), so new orders and families appear automatically. Orders are orange, families pink, extinct ones get a red dagger. Hover or keyboard focus pauses it, clicking jumps (cards: `goTo(i)`; D3: zooms like the search does), and `prefers-reduced-motion` stops it and lets it scroll by hand. Its classes are `tk-order`/`tk-family`, never bare `order`/`family`, because the card site styles those class names as rank boxes with a fixed 104px width.
 
 ## 7. Text/alias conventions
 
@@ -173,6 +175,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v4.9 (2026-11-08)** - 773 taxa, released at the user's request. New taxa ticker under the header on both sites (see §6 Fit to view and Taxa ticker). Added Otodus (megalodon) under Selachii beside Lamnidae, and Helicoprion and Stethacanthus directly under Chondrichthyes (both are stem holocephalans or early chondrichthyans, not true sharks), with no extra order/family levels. Card world 35809 x 4250.
 - **v4.8 (2026-11-07)** - 770 taxa. Added Perucetus (extinct basilosaurid early whale, 2023) inside Cetacea beside Mysticeti and Odontoceti (the user corrected an initial placement under Pakicetus); Arthropleura (giant Carboniferous millipede) directly under Diplopoda beside Julidae, with no extra order/family level (rule 8); the extinct order Eurypterida (sea scorpions) under Chelicerata beside Xiphosura, with Jaekelopterus; Hallucigenia under Onychophora beside Peripatus, as a stem-group velvet worm; Megalania (often called Varanus priscus) under Varanidae beside Varanus. These were first released as v4.8 to v5.2, then merged into one v4.8 at the user's request (the v4.9 to v5.2 git tags were removed). The rank-order audit lists Perucetus (genus) below Pakicetus (genus) because it skips the unranked Cetacea clade; expected. Megalania's long subtitle widened the card world to 35690 x 4250. Also in v4.8 (display only): navigation arrows are neutral grey in every theme. Added later in v4.8 (2026-11-08, no bump under the new version rule): Demodex (face mites) under Acari beside Ixodes.
 - **v4.7 (2026-11-07)** - 763 taxa. Added order Ichthyosauria (extinct) under Reptilia with Ichthyosauridae (Ichthyosaurus), Ophthalmosauridae (Ophthalmosaurus) and Shastasauridae (Shonisaurus, Shastasaurus, Ichthyotitan). Ichthyotitan (named 2024) is not in GBIF yet; GBIF also still files Ophthalmosaurus under Ichthyosauridae, while the tree uses its current family Ophthalmosauridae. Ichthyosaur placement among reptiles is debated. Card world 35566 x 4250. Also in v4.7 (display only, no bump): a gold star marks key evolutionary steps. The starred titles live in `const KEY=new Set([...])` in both files (Pikaia, Placodermi, Latimeria, Tiktaalik, Acanthostega, Ichthyostega, Hylonomus, Dimetrodon, Megazostrodon, Archaeopteryx, Pakicetus, Homo); to star another entry, add its title to KEY in both files. Both sites draw it about 21px tall over the top-right rounded corner: `.card .star` on cards (a round badge half outside the corner), `text.star` at x=w/2-3, y=-12 on D3. Measured clear of names, arrows and neighbouring boxes; re-check if the size or position changes. Also in v4.7 (card site only): cards with more than 5 children (perRow) show one count arrow `.nav.many` (like a 16 next to an up arrow) instead of stacked arrow rows; clicking it opens `.navlist`, a fixed-position list of the branches (scientific + common name) built by `openNavList()`, which closes on Escape, outside click, zoom or resize. Up to 5 children still get individual arrows, always in a single row at top:-22px. In v4.7 that was 12 cards (Actinopterygii, Placentalia, Lacertilia, Aves and others). Explained by the Vocab term "Key evolutionary step" and a Gold star row in the Colors key.
 - **v4.6 (2026-11-07)** - 754 taxa. Added Ammonoidea (extinct ammonites, subclass) under Cephalopoda with Dactylioceras, Baculites and Parapuzosia; "ammonite" now finds them in search. Interface: the gear menu's Highlight section is now a dropdown (`#hlToggle` opens `#hlPanel`, which holds `#hlList` and `#hlAll`), and `#hlCount` shows how many highlights are ticked.
