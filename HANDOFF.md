@@ -71,7 +71,7 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v4.8**; next bump = **v4.9**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+2. **Version badge** (`#ver` button in the header) **changes only when the user says so** (user rule since 2026-11-08; it replaces the older rule that bumped +0.1 for new animals or taxonomic changes) → currently **v4.8**. New animals, taxonomic changes, styling and everything else keep the current version: add a note to the current changelog section instead. When the user asks for a new version, the default is +0.1 (next = **v4.9**) unless they name a number.
 3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.8 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
 5. **After every change, verify on both live pages**: no console errors, 769 cards / 768 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
@@ -210,4 +210,4 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 - Serve with `tools\serve-animal-atlas.ps1` if no server is running (user may still have theirs up on 8080).
 - Confirm current live state matches §6 census before making changes.
-- Ask the user before: adding taxa (they may specify placement), removing anything (never without explicit consent), or bumping vs folding (§5.2).
+- Ask the user before: adding taxa (they may specify placement), removing anything (never without explicit consent), or changing the version (only when the user says so, §5.2).
