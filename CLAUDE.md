@@ -17,7 +17,7 @@ The user is new to Claude Code, so explain things in plain language.
 3. **Bump the version badge by 0.1 only for major changes: new animal entries or taxonomic changes** (such as ranks or placement in the tree). Anything else, like colors, styling or interface tweaks, keeps the current version. Ask if it is unclear.
 4. **Log every change in the changelog in both files:** a new section for a new version, otherwise a note in the current version's section.
 5. **Keep both sites in full parity:** same taxa, titles, subtitles and ranks (the rebuild `$overrides` are intentional). Keep `alias{}` in sync too.
-6. **After every change, verify both live pages** (HANDOFF §8): no console errors, 747 cards / 746 links, 0 overlaps, 0 lines crossing unrelated cards, one root, full title parity. The taxa count changes only if the user adds taxa.
+6. **After every change, verify both live pages** (HANDOFF §8): no console errors, 750 cards / 749 links, 0 overlaps, 0 lines crossing unrelated cards, one root, full title parity. The taxa count changes only if the user adds taxa.
 7. **Ask before adding taxa,** because the user may want to specify placement.
 8. **Avoid repetitive single-child chains** such as class > family > genus where each level has only one child (user preference since v4.1): connect the class straight to the genus instead.
 
