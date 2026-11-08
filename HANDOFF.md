@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v4.6**
+**Date of handoff:** 2026-11-06 · **Current version: v4.7**
 
 ## 1. Where the project is
 
@@ -26,7 +26,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**754 taxa / 753 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
+**763 taxa / 762 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -59,8 +59,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 754 · Bad parent indices: 0 · Overlapping card pairs: 0
-#      Only in manual: 0 · Only in D3: 0 · World: 34605 x 4250 · Root: LUCA parent=null
+#    → must print: Manual nodes: 763 · Bad parent indices: 0 · Overlapping card pairs: 0
+#      Only in manual: 0 · Only in D3: 0 · World: 35566 x 4250 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
 ```
@@ -71,10 +71,10 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v4.6**; next bump = **v4.7**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.6 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v4.7**; next bump = **v4.8**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.7 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 754 cards / 753 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 763 cards / 762 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -115,7 +115,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (754): family 183·family+a-ext 33·genus 264·genus+a-ext 86·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 69·order+a-ext 7·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (blank = LUCA).
+Current kind+accent census in `S` (763): family 183·family+a-ext 36·genus 264·genus+a-ext 91·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 69·order+a-ext 8·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (blank = LUCA).
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
@@ -173,6 +173,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v4.7 (2026-11-07)** - 763 taxa. Added order Ichthyosauria (extinct) under Reptilia with Ichthyosauridae (Ichthyosaurus), Ophthalmosauridae (Ophthalmosaurus) and Shastasauridae (Shonisaurus, Shastasaurus, Ichthyotitan). Ichthyotitan (named 2024) is not in GBIF yet; GBIF also still files Ophthalmosaurus under Ichthyosauridae, while the tree uses its current family Ophthalmosauridae. Ichthyosaur placement among reptiles is debated. Card world 35566 x 4250.
 - **v4.6 (2026-11-07)** - 754 taxa. Added Ammonoidea (extinct ammonites, subclass) under Cephalopoda with Dactylioceras, Baculites and Parapuzosia; "ammonite" now finds them in search. Interface: the gear menu's Highlight section is now a dropdown (`#hlToggle` opens `#hlPanel`, which holds `#hlList` and `#hlAll`), and `#hlCount` shows how many highlights are ticked.
 - **v4.5 (2026-11-07)** - 747 taxa. Added Tullimonstrum (Tully monster, extinct) directly under Bilateria with a placement-debated subtitle, because studies disagree on whether it was a vertebrate; GBIF also assigns it no phylum. Later in v4.5 (no bump, at the user's request): Cetacea moved under Pakicetus. Card world 34605 x 4250. Also in v4.5 at the user's request: Strombidae (true conchs) under Gastropoda with Aliger (queen conch) and Strombus; 750 taxa. Also in v4.5 (interface): the Theme select and Colors button moved into a gear menu in the header, with a new Vocab popup of 26 plain-language terms (taxon, rank, clade, paraphyletic, stem/crown group, extinct, megafauna, marine, tetrapod, amniote, synonym, LUCA and more), defined in the `terms` array of the gear script in both files. Also in v4.5 (interface): a Highlight tool in the gear menu (`#hlList` checkboxes, one per rank plus Extinct only, and a Show all button `#hlAll`). Ranks combine with OR; Extinct only narrows them with AND (alone it shows all extinct entries). State lives in `hlSel`/`hlExt`, and `hlOk(kind, extinct)` is checked inside `filterCards()`/`filterNodes()` alongside search, so both fade non-matching entries to 0.15. `syncClear()` shows the search clear button while a highlight is active, and clicking it resets the highlight too. If a new rank kind is added, add it to the `ranks` list in the highlight script in both files.
 - **v4.4 (2026-11-07)** - 746 taxa. Primates: Gigantopithecus (under Ponginae), Dinopithecus (Cercopithecidae), Archaeoindris in new Palaeopropithecidae. Fish: 13 new orders under Actinopterygii (Perciformes, Scombriformes, Anguilliformes, Siluriformes, Syngnathiformes, Gadiformes, Lophiiformes, Esociformes, Characiformes, Acipenseriformes, Clupeiformes, Pleuronectiformes, Gymnotiformes) plus Salmoniformes, Cypriniformes and Cichliformes, which now hold Salmonidae, Cyprinidae and Cichlidae; Coelacanthiformes (Latimeria) and subclass Dipnoi (Neoceratodus, Protopterus) under Sarcopterygii. Extinct marsupials: Zygomaturus, Palorchestidae (Palorchestes), Phascolonus, Sthenurus, Wakaleo, Nimbacinus, Chaeropodidae (Chaeropus); Peramelidae restored above Perameles. Deinotherium was requested but already present (v4.1). Theme: Light replaced by Dark (`data-theme=dark`); a saved `atlasTheme` of light is switched to dark on load.
