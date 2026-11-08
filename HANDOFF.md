@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-06 · **Current version: v4.7**
+**Date of handoff:** 2026-11-06 · **Current version: v4.8**
 
 ## 1. Where the project is
 
@@ -26,7 +26,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**763 taxa / 762 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
+**764 taxa / 763 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -59,8 +59,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 763 · Bad parent indices: 0 · Overlapping card pairs: 0
-#      Only in manual: 0 · Only in D3: 0 · World: 35566 x 4250 · Root: LUCA parent=null
+#    → must print: Manual nodes: 764 · Bad parent indices: 0 · Overlapping card pairs: 0
+#      Only in manual: 0 · Only in D3: 0 · World: 35787 x 4250 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
 ```
@@ -68,21 +68,13 @@ Notes:
 - The D3 layout x/y doesn't depend on kind/accent, so if you only changed `kind`/`subtitle`/`accent` you may reuse a freshly exported positions.json from the same session; otherwise export fresh.
 - `serve-animal-atlas.ps1` is the 8080 static server for day-to-day viewing.
 
-## DEV-ONLY: group labels (remove before the final release)
-
-The user asked for big faint background labels (Mammals, Reptiles, Birds, Fish, Dinosaurs, Arthropods) **for their own use only; they will not be in the final site**, so they are not in the public update log. Both files mark every piece with "DEV-ONLY group labels":
-- a `<!--DEV-ONLY group labels...-->` label row with the `#grpToggle` switch in the gear menu,
-- a `/*DEV-ONLY group labels*/` CSS block (`#grpToggle`, `#grpLabels.off`, `.grp-label`),
-- a `/*DEV-ONLY group labels...*/` script block: `grpPlace()` plus a site-specific call and the switch handler (localStorage key `atlasGroupLabels`).
-
-`grpPlace()` rasterises all boxes and connector lines into a 40px grid and, for each group (Birds, Dinosaurs, Arthropods, Fish, Mammals, Reptiles, rooted at Aves, Dinosauria, Arthropoda, Actinopterygii, Mammalia, Reptilia), picks the largest font size (2200 down to 300) whose label fits fully in free space within that group's horizontal range, nearest the group's centre. Placed labels are reserved so they don't overlap each other. `window.grpPlaced` lists the results. To remove: delete those three marked pieces in both files and the localStorage key.
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v4.7**; next bump = **v4.8**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.7 &mdash;`).
+2. **Version badge** (`#ver` button in the header) bumps **+0.1 only for major changes: new animal entries or taxonomic changes** (user rule since v3.2) → currently **v4.8**; next bump = **v4.9**. Anything else (colors, styling, interface tweaks) keeps the current version — extend the current changelog section instead. Versions before this rule bumped on every change, so history includes styling-only versions.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v4.8 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 763 cards / 762 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 764 cards / 763 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -119,11 +111,11 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
 - `a-arth` → **removed in v3.2 at the user's request** (0 rows, CSS deleted). Arthropods have no special border and show their normal rank colors. Don't re-add it unless asked.
-- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 115 rows: every extinct entry carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sauropterygia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition. **A group with living descendants must not be marked extinct** (Dinosauria, Therapsida, Cynodontia and Sphenacodontia are "... included" clades instead). Check on the D3 page: `r.descendants().filter(d=>d.data.accent==='a-ext'&&d.descendants().some(x=>x.data.accent!=='a-ext'))` must be empty, except Pakicetus: it keeps its red border while Cetacea branches off it at the user's request. The rank-order audit also flags Mysticeti and Odontoceti (suborders) inside Pakicetus (genus); that is expected for the same reason.
+- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 115 rows: every extinct entry carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sauropterygia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition. **A group with living descendants must not be marked extinct** (Dinosauria, Therapsida, Cynodontia and Sphenacodontia are "... included" clades instead). Check on the D3 page: `r.descendants().filter(d=>d.data.accent==='a-ext'&&d.descendants().some(x=>x.data.accent!=='a-ext'))` must be empty, except Pakicetus: it keeps its red border while Cetacea branches off it at the user's request. The rank-order audit also flags Mysticeti and Odontoceti (suborders) and Perucetus (genus) inside Pakicetus (genus); that is expected for the same reason.
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (763): family 183·family+a-ext 36·genus 264·genus+a-ext 91·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 69·order+a-ext 8·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (blank = LUCA).
+Current kind+accent census in `S` (764): family 183·family+a-ext 36·genus 264·genus+a-ext 92·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 69·order+a-ext 8·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 1·tribe 1·subtribe 1·blank 1 (blank = LUCA).
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
@@ -181,6 +173,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v4.8 (2026-11-07)** - 764 taxa. Added Perucetus (extinct basilosaurid early whale, 2023) under Pakicetus beside Cetacea, following the user's Pakicetus > Cetacea layout. The rank-order audit now also flags Perucetus (genus) inside Pakicetus (genus); expected. Card world 35787 x 4250.
 - **v4.7 (2026-11-07)** - 763 taxa. Added order Ichthyosauria (extinct) under Reptilia with Ichthyosauridae (Ichthyosaurus), Ophthalmosauridae (Ophthalmosaurus) and Shastasauridae (Shonisaurus, Shastasaurus, Ichthyotitan). Ichthyotitan (named 2024) is not in GBIF yet; GBIF also still files Ophthalmosaurus under Ichthyosauridae, while the tree uses its current family Ophthalmosauridae. Ichthyosaur placement among reptiles is debated. Card world 35566 x 4250. Also in v4.7 (display only, no bump): a gold star marks key evolutionary steps. The starred titles live in `const KEY=new Set([...])` in both files (Pikaia, Placodermi, Latimeria, Tiktaalik, Acanthostega, Ichthyostega, Hylonomus, Dimetrodon, Megazostrodon, Archaeopteryx, Pakicetus, Homo); to star another entry, add its title to KEY in both files. Both sites draw it about 21px tall over the top-right rounded corner: `.card .star` on cards (a round badge half outside the corner), `text.star` at x=w/2-3, y=-12 on D3. Measured clear of names, arrows and neighbouring boxes; re-check if the size or position changes. Also in v4.7 (card site only): cards with more than 5 children (perRow) show one count arrow `.nav.many` (like a 16 next to an up arrow) instead of stacked arrow rows; clicking it opens `.navlist`, a fixed-position list of the branches (scientific + common name) built by `openNavList()`, which closes on Escape, outside click, zoom or resize. Up to 5 children still get individual arrows, always in a single row at top:-22px. In v4.7 that was 12 cards (Actinopterygii, Placentalia, Lacertilia, Aves and others). Explained by the Vocab term "Key evolutionary step" and a Gold star row in the Colors key.
 - **v4.6 (2026-11-07)** - 754 taxa. Added Ammonoidea (extinct ammonites, subclass) under Cephalopoda with Dactylioceras, Baculites and Parapuzosia; "ammonite" now finds them in search. Interface: the gear menu's Highlight section is now a dropdown (`#hlToggle` opens `#hlPanel`, which holds `#hlList` and `#hlAll`), and `#hlCount` shows how many highlights are ticked.
 - **v4.5 (2026-11-07)** - 747 taxa. Added Tullimonstrum (Tully monster, extinct) directly under Bilateria with a placement-debated subtitle, because studies disagree on whether it was a vertebrate; GBIF also assigns it no phylum. Later in v4.5 (no bump, at the user's request): Cetacea moved under Pakicetus. Card world 34605 x 4250. Also in v4.5 at the user's request: Strombidae (true conchs) under Gastropoda with Aliger (queen conch) and Strombus; 750 taxa. Also in v4.5 (interface): the Theme select and Colors button moved into a gear menu in the header, with a new Vocab popup of 26 plain-language terms (taxon, rank, clade, paraphyletic, stem/crown group, extinct, megafauna, marine, tetrapod, amniote, synonym, LUCA and more), defined in the `terms` array of the gear script in both files. Also in v4.5 (interface): a Highlight tool in the gear menu (`#hlList` checkboxes, one per rank plus Extinct only, and a Show all button `#hlAll`). Ranks combine with OR; Extinct only narrows them with AND (alone it shows all extinct entries). State lives in `hlSel`/`hlExt`, and `hlOk(kind, extinct)` is checked inside `filterCards()`/`filterNodes()` alongside search, so both fade non-matching entries to 0.15. `syncClear()` shows the search clear button while a highlight is active, and clicking it resets the highlight too. If a new rank kind is added, add it to the `ranks` list in the highlight script in both files.
