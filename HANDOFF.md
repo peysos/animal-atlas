@@ -68,6 +68,14 @@ Notes:
 - The D3 layout x/y doesn't depend on kind/accent, so if you only changed `kind`/`subtitle`/`accent` you may reuse a freshly exported positions.json from the same session; otherwise export fresh.
 - `serve-animal-atlas.ps1` is the 8080 static server for day-to-day viewing.
 
+## DEV-ONLY: group labels (remove before the final release)
+
+The user asked for big faint background labels (Mammals, Reptiles, Birds, Fish, Dinosaurs, Arthropods) **for their own use only; they will not be in the final site**, so they are not in the public update log. Both files mark every piece with "DEV-ONLY group labels":
+- a `<!--DEV-ONLY group labels...-->` label row with the `#grpToggle` switch in the gear menu,
+- a `/*DEV-ONLY group labels*/` CSS block (`#grpToggle`, `#grpLabels.off`, `.grp-label`),
+- a `/*DEV-ONLY group labels...*/` script block: `grpPlace()` plus a site-specific call and the switch handler (localStorage key `atlasGroupLabels`).
+
+`grpPlace()` rasterises all boxes and connector lines into a 40px grid and, for each group (Birds, Dinosaurs, Arthropods, Fish, Mammals, Reptiles, rooted at Aves, Dinosauria, Arthropoda, Actinopterygii, Mammalia, Reptilia), picks the largest font size (2200 down to 300) whose label fits fully in free space within that group's horizontal range, nearest the group's centre. Placed labels are reserved so they don't overlap each other. `window.grpPlaced` lists the results. To remove: delete those three marked pieces in both files and the localStorage key.
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
