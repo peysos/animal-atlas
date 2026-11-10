@@ -26,7 +26,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**816 taxa / 815 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
+**817 taxa / 816 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -59,7 +59,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 816 · Bad parent indices: 0 · Overlapping card pairs: 0
+#    → must print: Manual nodes: 817 · Bad parent indices: 0 · Overlapping card pairs: 0
 #      Only in manual: 0 · Only in D3: 0 · World: 37795 x 4400 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
@@ -74,7 +74,7 @@ Notes:
 2. **Version badge** (`#ver` button in the header) **changes only when the user says so** (user rule since 2026-11-08; it replaces the older rule that bumped +0.1 for new animals or taxonomic changes) → currently **v5.4**. New animals, taxonomic changes, styling and everything else keep the current version: add a note to the current changelog section instead. When the user asks for a new version, the default is +0.1 (next = **v5.5**) unless they name a number.
 3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v5.4 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 816 cards / 815 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 817 cards / 816 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -115,7 +115,7 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (816): family 188·family+a-ext 41·genus 271·genus+a-ext 119·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 71·order+a-ext 12·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 2·tribe 2·subtribe 1·blank 1 (blank = LUCA).
+Current kind+accent census in `S` (817): family 188·family+a-ext 41·genus 272·genus+a-ext 119·clade 33·clade+a-ext 3·class 29·class+a-ext 2·order 71·order+a-ext 12·phylum 14·subphylum 7·subclass 3·subclass+a-ext 1·infraclass 2·superorder 3·suborder 4·suborder+a-ext 1·kingdom 2·domain 3·root 1·subfamily 2·tribe 2·subtribe 1·blank 1 (blank = LUCA).
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
@@ -177,7 +177,7 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
-- **v5.4 (2026-11-09)** - 816 taxa, released at the user's request. Added Cymothoa (tongue-eating louse, living) directly under Isopoda beside Armadillidium (Isopoda has no family level, so none was added), and the extinct family Eosimiidae under Primates with Eosimias (a family like its primate siblings). Search aliases cover "tongue-eating louse" and "early anthropoid". Card world 37795 x 4400.
+- **v5.4 (2026-11-09)** - 817 taxa, released at the user's request. Added Cymothoa (tongue-eating louse, living) directly under Isopoda beside Armadillidium (Isopoda has no family level, so none was added), and the extinct family Eosimiidae under Primates with Eosimias (a family like its primate siblings). Search aliases cover "tongue-eating louse" and "early anthropoid". Later in v5.4 (no bump): Bathynomus (giant deep-sea isopods, living) under Isopoda beside Cymothoa, with a "giant isopod" search alias. Card world 37795 x 4400.
 - **v5.3 (2026-11-09)** - 813 taxa, released at the user's request. Added Castoroides (Ice Age giant beaver) under Castoridae beside Castor, with a "giant beaver" search alias. Card world 37554 x 4400. Also in v5.3 (interface): a new Fossil theme (brown with a faint fossil pattern).
 - **v5.2 (2026-11-09)** - 812 taxa, released at the user's request after they pointed out that humans and chimps are closer to each other than to gorillas, and that Australopithecus belongs on the human line. Added the subfamily Homininae (African apes & humans) under Hominidae beside Ponginae, and the tribe Hominini (humans & chimpanzees) under it beside Gorillini. Panina moved from Hominidae into Hominini; Australopithecus moved into Hominini and Homo now sits under Australopithecus (straight human line, chosen by the user over adding a subtribe Hominina). Search aliases added for Homininae and Hominini. Card world 37314 x 4400. Also in v5.2 (interface): a "★ Key steps only" switch in the Highlight list (`hlKey`, see the Highlight notes).
 - **v5.1 (2026-11-09)** - 810 taxa (806 at release; the jerboa family Dipodidae under Rodentia with the genus Jaculus added later with no bump, card world 37740 x 4400; Ramapithecus and Australopithecus added the same day with no bump: Ramapithecus under Ponginae beside Pongo and Gigantopithecus, with a subtitle noting it is now placed in Sivapithecus; Australopithecus under Hominidae beside Homo; placements chosen by the user; card world then 37544 x 4400), released at the user's request. The user also chose to keep Thecostraca > Cirripedia > Balanus as it is, so don't shorten that chain under rule 8. Added Microraptor (Dromaeosauridae), Styracosaurus (Ceratopsidae), Confuciusornis (Maniraptora, beside Archaeopteryx and Gansus), Dryopithecus (Hominidae) and Ambulocetus (between Pakicetus and Cetacea: at the user's request the whale line runs straight Pakicetus > Ambulocetus > Cetacea with no branching); plus the families Iguanodontidae (Iguanodon, under Ornithischia) and Teratornithidae (Argentavis, under Cathartiformes) and the extinct order Dinocerata (Uintatherium, under Placentalia), each matching sibling ranks. The user typed iguanadon; the card uses Iguanodon and the misspelling is a search alias. Card world 37179 x 4400 (one level deeper). Full chart review (2026-11-09, no bump): every entry checked against its parent and none were misplaced; subtitles tidied for Eurypterida (extinct sea scorpions), Otodus (extinct megalodon shark) and Merops (typical bee-eaters). Remaining audit flags are deliberate: Eukaryota inside Archaea, and the Pakicetus > Ambulocetus > Cetacea whale line. Known debatable spots left as they are: Deinosuchus outside Crocodylia, Glyptodontidae as its own family rather than inside Chlamyphoridae, and Gorillini/Panina directly under Hominidae.
