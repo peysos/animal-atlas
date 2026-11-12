@@ -181,6 +181,8 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 10. Version history
 
+- **v5.6 search update (2026-11-12)** — the requested Procoptodon was already present under Macropodidae in both charts and on GitHub. Expanded its aliases for giant kangaroo, short faced kangaroo and Procoptodon goliah; no duplicate taxon added. Placement confirmed against the [Australian Museum](https://australian.museum/learn/australia-over-time/extinct-animals/procoptodon-goliah/). Counts remain 972 taxa / 971 links. Standing authorization to publish all requested verified changes was reaffirmed by the user.
+
 - **v5.6 additions (2026-11-12, no version bump)** — basking sharks (Cetorhinus) plus Cetorhinidae, 38 families for existing living genera, Otodontidae for Otodus, and 16 missing orders (57 added nodes total). Existing shark/ray families now have orders. 972 taxa / 971 links; card world 49259 x 4400. The user explicitly requested missing ranks, so single-child family/order steps are allowed for these additions. [Detailed placements, sources, scope and verification](docs/taxonomy-2026-11-12.md). All living genera now have a family ancestor.
 
 - **v5.6 (2026-11-11)** - 915 taxa, released at the user's request: phone support for both sites (touch pan and pinch zoom, compact phone header, 🔍 search box, phone starting view on Animalia, keyboard-safe resizing, touch hint text). Desktop layout and controls checked unchanged. See §6 Phone support.
