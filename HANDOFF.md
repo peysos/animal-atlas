@@ -219,9 +219,11 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 
 ## 11. Rollback procedure
 
-**Preferred (v2.8 onward):** the project is a local git repository with one tag per version. `git tag` lists versions; `git restore --source=v2.8 -- animal-evolution-tree.html full-animal-tree.html` restores both sites. Confirm with the user first, because this overwrites the current files.
+**Preferred (v2.8 onward):** the project is a git repository with one tag per version, also on GitHub since v5.6 (see GitHub below). `git tag` lists versions; `git restore --source=v2.8 -- animal-evolution-tree.html full-animal-tree.html` restores both sites. Confirm with the user first, because this overwrites the current files.
 
 **Older snapshot:** restore = copy `backups\*-v2.7.html` over the live files. **But** the backup predates the whole v2.8 rank/accent data change — if the user wants to keep v2.8 data but only revert some styling, edit the CSS classes listed in §6 instead. Always verify (§8) after any rollback.
+
+**GitHub (since v5.6):** remote `origin` = https://github.com/peysos/animal-atlas (public), branch `main`, version tags pushed too. GitHub Pages serves `main` from the repo root at https://peysos.github.io/animal-atlas/. `index.html` redirects to the card site and `full/index.html` to the D3 site, matching the local `/` and `/full` addresses (the local server ignores them). Before the first push every commit was re-signed from the user's Gmail to the private address `324647968+peysos@users.noreply.github.com`, now set as `user.email` in this repo; a bundle of the old history was kept only in the session scratchpad. Push only when the user asks (`git push origin main --tags`, or `git push -f origin vX.Y` after moving a tag), since it updates the public site within a minute or two.
 
 ## 12. Suggested next steps for Claude
 
