@@ -11,11 +11,12 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 ## Current state
 
 - Current version: **v5.6**
-- Pending separate single-entry requests: **3 / 5**
-- Next automatic single-entry version bump: **v5.7**, after two more qualifying requests. A batch request can trigger it sooner.
+- Pending separate single-entry requests: **4 / 5**
+- Next automatic single-entry version bump: **v5.7**, after one more qualifying request. A batch request can trigger it sooner.
 
 | Count | Added entry | Request date |
 |---|---|---|
 | 1 | Nigersaurus (explicitly counted by the user; its supporting family counts with it) | 2026-11-12 |
 | 2 | Utahraptor | 2026-11-12 |
 | 3 | Sarcosuchus (its supporting family counts with it) | 2026-11-12 |
+| 4 | Mesopithecus | 2026-11-12 |

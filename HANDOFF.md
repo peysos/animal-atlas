@@ -26,7 +26,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**977 taxa / 976 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
+**978 taxa / 977 links. Every entry must stay: never remove taxa, every node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -59,8 +59,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 977 · Bad parent indices: 0 · Overlapping card pairs: 0
-#      Only in manual: 0 · Only in D3: 0 · World: 51725 x 4400 · Root: LUCA parent=null
+#    → must print: Manual nodes: 978 · Bad parent indices: 0 · Overlapping card pairs: 0
+#      Only in manual: 0 · Only in D3: 0 · World: 51916 x 4400 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
 ```
@@ -71,10 +71,10 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa.** Every entry stays connected; no orphans; one root.
-2. **Version badge** follows the new [VERSIONING.md](VERSIONING.md) rule (2026-11-12), replacing the older explicit-bump-only rule: +0.1 after five separate single-entry addition requests, or once per batch request. Supporting taxonomy nodes are not extra requested animals; duplicates and non-addition edits do not count. Explicit version requests take precedence. Current **v5.6**, counter **3 / 5**: Nigersaurus, Utahraptor, Sarcosuchus. Persist the ledger in VERSIONING.md and keep both badges/changelogs in sync.
+2. **Version badge** follows the new [VERSIONING.md](VERSIONING.md) rule (2026-11-12), replacing the older explicit-bump-only rule: +0.1 after five separate single-entry addition requests, or once per batch request. Supporting taxonomy nodes are not extra requested animals; duplicates and non-addition edits do not count. Explicit version requests take precedence. Current **v5.6**, counter **4 / 5**: Nigersaurus, Utahraptor, Sarcosuchus, Mesopithecus. Persist the ledger in VERSIONING.md and keep both badges/changelogs in sync.
 3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v5.6 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 977 cards / 976 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 978 cards / 977 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -111,13 +111,13 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
 - `a-arth` → **removed in v3.2 at the user's request** (0 rows, CSS deleted). Arthropods have no special border and show their normal rank colors. Don't re-add it unless asked.
-- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 199 rows: every extinct entry carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sauropterygia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition. **A group with living descendants must not be marked extinct** (Dinosauria, Therapsida, Cynodontia and Sphenacodontia are "... included" clades instead). Check on the D3 page: `r.descendants().filter(d=>d.data.accent==='a-ext'&&d.descendants().some(x=>x.data.accent!=='a-ext'))` must be empty, except Pakicetus and Ambulocetus (the whale line: they keep their red borders while Cetacea branches off them at the user's request) and, since v5.2, Australopithecus (it keeps its red border while Homo branches off it, also at the user's direction). The rank-order audit also flags Mysticeti and Odontoceti (suborders) and Perucetus (genus) inside Pakicetus (genus); that is expected for the same reason.
+- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 200 rows: every extinct entry carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sauropterygia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition. **A group with living descendants must not be marked extinct** (Dinosauria, Therapsida, Cynodontia and Sphenacodontia are "... included" clades instead). Check on the D3 page: `r.descendants().filter(d=>d.data.accent==='a-ext'&&d.descendants().some(x=>x.data.accent!=='a-ext'))` must be empty, except Pakicetus and Ambulocetus (the whale line: they keep their red borders while Cetacea branches off them at the user's request) and, since v5.2, Australopithecus (it keeps its red border while Homo branches off it, also at the user's direction). The rank-order audit also flags Mysticeti and Odontoceti (suborders) and Perucetus (genus) inside Pakicetus (genus); that is expected for the same reason.
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (977): blank 1·domain 3·kingdom 2·clade 33·root 1·phylum 14·class 29·genus 323·genus+a-ext 132·clade+a-ext 4·class+a-ext 2·family 251·subphylum 7·superorder 3·order+a-ext 12·family+a-ext 47·suborder+a-ext 1·order 97·suborder 4·subfamily 2·tribe 2·subtribe 1·infraclass 2·subclass 3·subclass+a-ext 1 (blank = LUCA).
+Current kind+accent census in `S` (978): blank 1·domain 3·kingdom 2·clade 33·root 1·phylum 14·class 29·genus 323·genus+a-ext 133·clade+a-ext 4·class+a-ext 2·family 251·subphylum 7·superorder 3·order+a-ext 12·family+a-ext 47·suborder+a-ext 1·order 97·suborder 4·subfamily 2·tribe 2·subtribe 1·infraclass 2·subclass 3·subclass+a-ext 1 (blank = LUCA).
 
-**Card name sizing (v5.5):** `fitCardNames()` measures the bold name (including an extinct dagger) with the rendered font and widens only cards that need it. Base widths remain 104px for families and 124px for other ranks; names stay on one line while subtitles wrap naturally. It runs after card creation and again after fonts are ready. The rebuild preserves this hand-maintained code. Verified all 977 names fit, with no card overlaps or connector crossings.
+**Card name sizing (v5.5):** `fitCardNames()` measures the bold name (including an extinct dagger) with the rendered font and widens only cards that need it. Base widths remain 104px for families and 124px for other ranks; names stay on one line while subtitles wrap naturally. It runs after card creation and again after fonts are ready. The rebuild preserves this hand-maintained code. Verified all 978 names fit, with no card overlaps or connector crossings.
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
@@ -180,6 +180,8 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 9. **PowerShell functions return everything they print.** A helper that prints a status string and then returns text hands back both, and writing that result puts the status text at the top of the file. Use `Write-Host` for messages inside such helpers, and check that the file still starts with `<!doctype html>` before moving on.
 
 ## 10. Version history
+
+- **v5.6 addition (2026-11-12, counter 4/5)** — added Mesopithecus, an extinct colobine monkey, directly under Cercopithecidae to match the family-level layout of its siblings. Family placement confirmed by [Alba et al. (2015)](https://pubmed.ncbi.nlm.nih.gov/26553814/). Existing extinct-genus styling and synced search aliases preserved. 978 taxa / 977 links; card world 51916 x 4400. Both charts match, no entries removed, no overlaps or clipped names, no card-chart connector crossings, one LUCA root, working search and no runtime errors. One more qualifying separate single-entry request triggers v5.7.
 
 - **v5.6 addition (2026-11-12, counter 3/5)** — added Sarcosuchus under extinct Pholidosauridae under Crocodylomorpha, outside modern Crocodylia and the Eusuchia branch. Placement follows [the pholidosaurid research review](https://pmc.ncbi.nlm.nih.gov/articles/PMC13398619/). Both entries retain true family/genus colors, red extinct borders and daggers. Search includes SuperCroc and giant crocodile. 977 taxa / 976 links; card world 51725 x 4400. Verified matching data, no removed taxa, no overlaps or clipped card names, no card-chart connector crossings, one LUCA root and no runtime errors. Sarcosuchus is the third separate single-entry request; its family is not an extra counted animal.
 
