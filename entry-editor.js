@@ -8,6 +8,7 @@
   const allowedImage = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
   let dbPromise, current = null, dirty = false, busy = false, opener = null, loadToken = 0;
   let storedAtOpen = null;
+  let lastEntryName = null, lastEntryTap = 0;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -25,6 +26,12 @@
     .entry-editor .ee-remove{font-size:11px;padding:4px 8px}.entry-editor .ee-empty{margin:6px 0;color:#bdcec4;font-size:12px}.entry-editor .ee-footer{padding:16px 24px;border-top:1px solid #ffffff20;display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#ffffff05}
     .entry-editor .ee-save{background:#2c6756;border-color:#8ebfac;font-weight:bold}.entry-editor .ee-status{flex:1 1 100%;min-height:20px;margin:0;color:#bdcec4;font-size:11px}.entry-editor .ee-status[data-error=true]{color:#ffb6a8}.entry-editor .ee-read-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}
     .entry-editor .ee-time{font-size:10px;color:#bdcec4;margin:10px 0 0}.entry-editor [hidden]{display:none!important}
+    .entry-editor .ee-image-open{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;border-radius:6px}
+    .ee-image-viewer{box-sizing:border-box;width:min(1200px,96vw);height:min(900px,94dvh);max-width:96vw;max-height:94dvh;margin:auto;padding:16px;border:1px solid #66877d;border-radius:14px;background:var(--bg,#173938);color:var(--txt,#eef6ef);box-shadow:0 24px 90px #000b;overflow:hidden}
+    .ee-image-viewer::backdrop{background:#020b0ded;backdrop-filter:blur(6px)}.ee-image-viewer[open]{display:flex;flex-direction:column;gap:12px}
+    .ee-image-viewer .ee-viewer-close{align-self:flex-end;background:#ffffff0a;color:inherit;border:1px solid #66877d;border-radius:8px;padding:8px 12px;font:13px ui-monospace,Consolas,monospace;cursor:pointer}
+    .ee-image-viewer .ee-viewer-close:focus-visible{outline:2px solid #a5d5c2;outline-offset:3px}.ee-image-viewer figure{display:flex;flex-direction:column;flex:1;min-height:0;margin:0}
+    .ee-image-viewer img{display:block;flex:1;min-height:0;width:100%;height:100%;object-fit:contain}.ee-image-viewer figcaption{flex:none;max-height:18dvh;overflow:auto;margin-top:10px;font:12px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:center}
     @media(max-width:650px){.entry-editor{width:96vw;max-height:94dvh;border-radius:13px}.entry-editor header{padding:16px}.entry-editor h2{font-size:21px}.entry-editor .ee-main{padding:17px 16px}.entry-editor .ee-footer{padding:14px 16px}.entry-editor .ee-images{grid-template-columns:repeat(2,minmax(0,1fr))}.entry-editor textarea{min-height:180px;font-size:16px}.entry-editor .ee-caption{font-size:16px}.entry-editor figure img{height:115px}.entry-editor .ee-footer button{flex:1 1 auto}}
   `;
   document.head.append(style);
@@ -42,6 +49,25 @@
     </div>
     <footer class="ee-footer"><button class="ee-save" type="button">Save</button><button class="ee-copy" type="button">Copy name</button><button class="ee-export" type="button">Download backup</button><button class="ee-import" type="button">Restore backup</button><input id="ee-backup" type="file" accept="application/json,.json" hidden><p class="ee-status" role="status" aria-live="polite"></p></footer>`;
   document.body.append(dialog);
+  const imageViewer = document.createElement('dialog');
+  imageViewer.className = 'ee-image-viewer'; imageViewer.setAttribute('aria-label', 'Enlarged entry image');
+  imageViewer.innerHTML = '<button type="button" class="ee-viewer-close" aria-label="Close enlarged image">Close ×</button><figure><img alt=""><figcaption></figcaption></figure>';
+  document.body.append(imageViewer);
+  let imageOpener = null;
+  function closeImage() { imageViewer.close(); imageViewer.querySelector('img').removeAttribute('src'); imageOpener?.focus({ preventScroll: true }); }
+  function enlargeImage(image, button) {
+    imageOpener = button;
+    const picture = imageViewer.querySelector('img'), caption = imageViewer.querySelector('figcaption');
+    picture.src = image.data; picture.alt = image.caption || `Image of ${current.name}`;
+    caption.textContent = image.caption || current.name;
+    imageViewer.showModal();
+  }
+  imageViewer.querySelector('button').addEventListener('click', closeImage);
+  imageViewer.addEventListener('cancel', event => { event.preventDefault(); event.stopPropagation(); closeImage(); });
+  imageViewer.addEventListener('click', event => {
+    const bounds = imageViewer.getBoundingClientRect();
+    if (event.target === imageViewer && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) closeImage();
+  });
   const $ = selector => dialog.querySelector(selector);
   const textarea = $('#ee-text'), fileInput = $('#ee-files'), backupInput = $('#ee-backup');
   function status(message, error = false) { $('.ee-status').textContent = message; $('.ee-status').dataset.error = String(error); }
@@ -86,7 +112,9 @@
     $('.ee-empty').hidden = current.images.length !== 0;
     current.images.forEach((img, index) => {
       const figure = document.createElement('figure'), picture = document.createElement('img');
-      picture.src = img.data; picture.alt = img.caption || `Image of ${current.name}`; figure.append(picture);
+      picture.src = img.data; picture.alt = img.caption || `Image of ${current.name}`;
+      const enlarge = document.createElement('button'); enlarge.type = 'button'; enlarge.className = 'ee-image-open'; enlarge.title = 'Click to enlarge'; enlarge.setAttribute('aria-label', `Enlarge image ${index + 1} of ${current.name}`);
+      enlarge.append(picture); enlarge.addEventListener('click', () => enlargeImage(img, enlarge)); figure.append(enlarge);
       if (editing) {
         const caption = document.createElement('input'); caption.type = 'text'; caption.className = 'ee-caption'; caption.value = img.caption; caption.maxLength = 2000; caption.placeholder = 'Caption / image credit'; caption.setAttribute('aria-label', `Caption or credit for image ${index + 1}`);
         caption.addEventListener('input', () => { img.caption = caption.value; picture.alt = caption.value || `Image of ${current.name}`; changed(); });
@@ -105,10 +133,11 @@
   function close() {
     if (busy) return;
     if (dirty && !window.confirm('Close without saving your changes?')) return;
-    ++loadToken; dialog.close(); current = null; dirty = false; opener?.focus({ preventScroll: true });
+    ++loadToken; dialog.close(); current = null; dirty = false; lastEntryName = null; opener?.focus({ preventScroll: true });
   }
   async function open(name, subtitle = '') {
     if (dialog.open) return;
+    lastEntryName = null;
     opener = document.activeElement; const token = ++loadToken;
     name = canonical(name); current = { name, text: '', images: [] }; storedAtOpen = null; dirty = false;
     $('#ee-title').textContent = name; $('#ee-subtitle').textContent = subtitle;
@@ -218,8 +247,15 @@
     node.addEventListener('keydown', event => {
       if (event.target === node && (event.key === 'Enter' || event.key === ' ')) {
         event.preventDefault(); event.stopPropagation(); node.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        open(node.dataset.name || node.__data__?.data?.title, node.dataset.subtitle || node.__data__?.data?.subtitle || '');
       }
     });
   });
-  window.AnimalAtlasEntries = { open };
+  function activate(name, subtitle) {
+    if (dialog.open) return;
+    const now = Date.now(), key = canonical(name);
+    if (lastEntryName === key && now - lastEntryTap < 400) { lastEntryName = null; open(name, subtitle); }
+    else { lastEntryName = key; lastEntryTap = now; }
+  }
+  window.AnimalAtlasEntries = { open, activate };
 })();

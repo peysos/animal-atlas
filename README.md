@@ -13,4 +13,4 @@ Both pages are plain HTML files with shared entry-editor assets and no build ste
 
 ## Write your own entry information
 
-Click any entry once to open the test editor, write text, add images and captions, then Save. Work is stored only in your current browser; it is not automatically published. Download a backup regularly so it can be restored or used to publish the finished content. [Editor guide](docs/entry-editor.md).
+Double-click or double-tap an entry to open the test editor, write text, add images and captions, then Save. Work is stored only in your current browser; it is not automatically published. Download a backup regularly so it can be restored or used to publish the finished content. [Editor guide](docs/entry-editor.md).

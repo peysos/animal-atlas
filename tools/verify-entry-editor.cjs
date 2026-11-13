@@ -35,6 +35,9 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
       x = tx = view.clientWidth / 2 - n[3]; y = ty = view.clientHeight / 2 - n[4]; draw();
     });
     await page.locator('.card[data-name="Nigersaurus"]').click();
+    assert.equal(await page.locator('.entry-editor').isVisible(), false);
+    await page.waitForTimeout(450);
+    await page.locator('.card[data-name="Nigersaurus"]').dblclick();
     await ready(page);
     assert.equal(await page.locator('#ee-title').innerText(), 'Nigersaurus');
     const text = 'My information\n<em>Plain text, not HTML</em>';
@@ -46,6 +49,16 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     await page.locator('#ee-files').setInputFiles({ name: 'test.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') });
     await page.waitForFunction(() => document.querySelectorAll('.ee-images img').length === 1 && !document.querySelector('#ee-text').disabled);
     await page.locator('.ee-caption').fill('My credit');
+    const thumbnailWidth = await page.locator('.ee-images img').evaluate(img => img.getBoundingClientRect().width);
+    await page.locator('.ee-images img').click();
+    assert.equal(await page.locator('.ee-image-viewer').isVisible(), true);
+    assert.ok(await page.locator('.ee-image-viewer img').evaluate(img => img.getBoundingClientRect().width) > thumbnailWidth);
+    assert.equal(await page.locator('.ee-image-viewer figcaption').innerText(), 'My credit');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('.ee-image-viewer').isVisible(), false);
+    assert.equal(await page.locator('.entry-editor').isVisible(), true);
+    assert.equal(await page.locator('#ee-text').inputValue(), text);
+    assert.equal(await page.locator('.ee-caption').inputValue(), 'My credit');
     await save(page);
     const downloadPromise = page.waitForEvent('download');
     await page.locator('.ee-export').click();
@@ -65,7 +78,7 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
       const d = r.descendants().find(d => d.data.id === 'nigersaurus');
       V.call(zoom.transform, d3.zoomIdentity.translate(innerWidth / 2 - d.x, (innerHeight - 100) / 2 + d.y));
     });
-    await full.locator('.n').filter({ has: full.locator('.t', { hasText: 'Nigersaurus' }) }).click();
+    await full.locator('.n').filter({ has: full.locator('.t', { hasText: 'Nigersaurus' }) }).dblclick();
     await ready(full);
     assert.equal(await full.locator('#ee-text').inputValue(), text);
     await open(page, 'Nigersaurus');
@@ -79,7 +92,14 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     const phoneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     await phoneContext.route('**/*', serve);
     const phone = await phoneContext.newPage();
-    await phone.goto('https://atlas.test/animal-evolution-tree.html'); await open(phone, 'Nigersaurus');
+    await phone.goto('https://atlas.test/animal-evolution-tree.html');
+    await phone.evaluate(() => {
+      const n = D.find(n => n[0] === 'Nigersaurus'); s = ts = 1;
+      x = tx = view.clientWidth / 2 - n[3]; y = ty = view.clientHeight / 2 - n[4]; draw();
+    });
+    await phone.locator('.card[data-name="Nigersaurus"]').tap();
+    assert.equal(await phone.locator('.entry-editor').isVisible(), false);
+    await phone.locator('.card[data-name="Nigersaurus"]').tap(); await ready(phone);
     assert.equal(await phone.locator('#ee-text').inputValue(), '');
     phone.once('dialog', d => d.accept());
     await phone.locator('#ee-backup').setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: Buffer.from(backupText) });
@@ -87,6 +107,11 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     assert.equal(await phone.locator('#ee-text').inputValue(), text);
     assert.equal(await phone.locator('.ee-images img').count(), 1);
     assert.equal(await phone.locator('.entry-editor').evaluate(e => e.scrollWidth <= e.clientWidth), true);
+    await phone.locator('.ee-images img').tap();
+    assert.equal(await phone.locator('.ee-image-viewer').isVisible(), true);
+    assert.equal(await phone.locator('.ee-image-viewer').evaluate(e => e.scrollWidth <= e.clientWidth), true);
+    await phone.locator('.ee-viewer-close').tap();
+    assert.equal(await phone.locator('.entry-editor').isVisible(), true);
     await phone.locator('.ee-remove').click(); await save(phone); await phone.locator('.ee-close').click();
     await open(phone, 'Tyrannosaurus'); assert.equal(await phone.locator('#ee-text').inputValue(), '');
     await phone.locator('#ee-backup').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{"format":"wrong"}') });
@@ -100,6 +125,9 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     assert.equal(await reader.locator('.ee-read-text').innerText(), text);
     assert.equal(await reader.locator('.ee-read-text em').count(), 0);
     assert.equal(await reader.locator('.ee-images img').count(), 1);
+    await reader.locator('.ee-images img').click();
+    assert.equal(await reader.locator('.ee-image-viewer').isVisible(), true);
+    await reader.locator('.ee-viewer-close').click();
 
     const blockedContext = await browser.newContext({ acceptDownloads: true });
     await blockedContext.route('**/*', serve);
@@ -113,6 +141,6 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     const rescue = JSON.parse(await fs.readFile(await (await rescuePromise).path(), 'utf8'));
     assert.equal(rescue.entries[0].text, 'Rescue my draft');
     assert.deepEqual(errors, []);
-    console.log('PASS: click, text/image save, captions, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, image removal, entry isolation, invalid import, read-only content, safe text rendering, storage-failure recovery.');
+    console.log('PASS: single-click selection, double-click opening in both views, enlarged images on desktop/phone/read-only views, text/image save, captions, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, image removal, entry isolation, invalid import, safe text rendering, storage-failure recovery.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
