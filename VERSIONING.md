@@ -10,9 +10,13 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 
 ## Current state
 
-- Current version: **v5.6**
-- Pending separate single-entry requests: **4 / 5**
-- Next automatic single-entry version bump: **v5.7**, after one more qualifying request. A batch request can trigger it sooner.
+- Current version: **v5.7**
+- Pending separate single-entry requests: **0 / 5**
+- Next automatic single-entry version bump: **v5.8**, after five more qualifying requests. A batch request can trigger it sooner.
+
+## Completed cycle — v5.7
+
+The following five separate addition requests completed the v5.7 cycle; the current cycle is empty.
 
 | Count | Added entry | Request date |
 |---|---|---|
@@ -20,3 +24,4 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 | 2 | Utahraptor | 2026-11-12 |
 | 3 | Sarcosuchus (its supporting family counts with it) | 2026-11-12 |
 | 4 | Mesopithecus | 2026-11-12 |
+| 5 | Ichthyornis (its supporting family and order count with it) | 2026-11-12 |
