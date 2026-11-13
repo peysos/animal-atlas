@@ -7,7 +7,7 @@ Read CLAUDE.md and HANDOFF.md before changing the chart. They define the data so
 The user gave standing authorization on 2026-11-12: when adding or changing the site, publish the verified result to https://github.com/peysos/animal-atlas and its GitHub Pages site at https://peysos.github.io/animal-atlas/.
 
 - Keep both chart views, search aliases, and changelogs in sync. Rebuild the card chart from the D3 source after data changes.
-- Keep the current version unless the user requests a new one.
+- Follow VERSIONING.md: bump +0.1 after five separate single-entry addition requests, or once for a batch request. Supporting family/order nodes do not count as separate animals. Persist the current counter there; explicit version requests take precedence.
 - Before publishing, inspect the current remote main head and preserve concurrent work. Verify the requested change, then commit and publish the intended files to main. Never force-push main.
 - Follow the version-tag rules in CLAUDE.md. If an existing published version tag must move, update only that tag with a lease against its observed remote SHA.
 - Check the GitHub Pages deployment for the published commit and report success or the actual failure. Do not claim the live site updated merely because a push succeeded.
