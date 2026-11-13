@@ -17,7 +17,7 @@ The user is new to Claude Code, so explain things in plain language.
 3. **Follow [VERSIONING.md](VERSIONING.md)** (new user rule, 2026-11-12): bump +0.1 after five separate single-entry addition requests, or exactly once for a batch request. Supporting family/order nodes are not extra requested animals. Already-present entries and non-addition edits do not count. Explicit version requests take precedence. Update the persistent counter after every completed addition.
 4. **Log every change in the changelog in both files:** a note in the current version's section, or a new section when the user asks for a new version.
 5. **Keep both sites in full parity:** same taxa, titles, subtitles and ranks (the rebuild `$overrides` are intentional). Keep `alias{}` in sync too.
-6. **After every change, verify both live pages** (HANDOFF §8): no console errors, 975 cards / 974 links, 0 overlaps, 0 lines crossing unrelated cards, one root, full title parity. The taxa count changes only if the user adds taxa.
+6. **After every change, verify both live pages** (HANDOFF §8): no console errors, 977 cards / 976 links, 0 overlaps, 0 lines crossing unrelated cards, one root, full title parity. The taxa count changes only if the user adds taxa.
 7. **Ask before adding taxa,** because the user may want to specify placement.
 8. **Avoid repetitive single-child chains** such as class > family > genus where each level has only one child (user preference since v4.1): connect the class straight to the genus instead. Exception: on 2026-11-12 the user requested missing families and orders; include verified ranks for that task even when a step has only one child.
 
