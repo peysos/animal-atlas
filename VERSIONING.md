@@ -11,12 +11,18 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 ## Current state
 
 - Current version: **v5.7**
-- Pending separate single-entry requests: **0 / 5**
-- Next automatic single-entry version bump: **v5.8**, after five more qualifying requests. A batch request can trigger it sooner.
+- Pending separate single-entry requests: **1 / 5**
+- Next automatic single-entry version bump: **v5.8**, after four more qualifying requests. A batch request can trigger it sooner.
+
+## Current cycle — toward v5.8
+
+| Count | Added entry | Request date |
+|---|---|---|
+| 1 | Borealopelta (its supporting family counts with it) | 2026-11-12 |
 
 ## Completed cycle — v5.7
 
-The following five separate addition requests completed the v5.7 cycle; the current cycle is empty.
+The following five separate addition requests completed the v5.7 cycle; the new cycle is tracked above.
 
 | Count | Added entry | Request date |
 |---|---|---|
