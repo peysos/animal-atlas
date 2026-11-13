@@ -1,6 +1,6 @@
 # Animal Atlas
 
-Two synced single-file websites showing an evolutionary tree of animal life. No build step.
+Two synced HTML charts showing an evolutionary tree of animal life, with shared entry-content.js and entry-editor.js assets. No build step.
 
 **Read [HANDOFF.md](HANDOFF.md) before changing anything.** It has the data format, rebuild pipeline, color system, verification snippets and known pitfalls.
 
@@ -20,6 +20,9 @@ The user is new to Claude Code, so explain things in plain language.
 6. **After every change, verify both live pages** (HANDOFF §8): no console errors, 981 cards / 980 links, 0 overlaps, 0 lines crossing unrelated cards, one root, full title parity. The taxa count changes only if the user adds taxa.
 7. **Ask before adding taxa,** because the user may want to specify placement.
 8. **Avoid repetitive single-child chains** such as class > family > genus where each level has only one child (user preference since v4.1): connect the class straight to the genus instead. Exception: on 2026-11-12 the user requested missing families and orders; include verified ranks for that task even when a step has only one child.
+
+## User-authored entry content
+The test editor saves text/images only in the current browser’s IndexedDB, not GitHub. Keep both views connected to the shared editor. Before switching to read-only mode or removing any editing controls, obtain and preserve the user’s latest exported backup, publish the content, and verify it. Never clear user browser storage or publish test fixtures. See docs/entry-editor.md.
 
 ## Git
 The repository is on GitHub as `peysos/animal-atlas` (remote `origin`, branch `main`), published with GitHub Pages at https://peysos.github.io/animal-atlas/ (user request, 2026-11-11). The user gave standing authorization on 2026-11-12 to publish future verified project changes to GitHub and the live site. After making a requested change, verify both charts, commit the intended files, publish to origin/main, and check the GitHub Pages deployment. Do not ask for publication permission again for these requested changes; report any actual access or deployment failure. Check the remote head first and integrate concurrent changes without overwriting them; never force-push main. Commits use the private GitHub address `324647968+peysos@users.noreply.github.com` (set in this repo's git config) so the user's real email stays private; keep it that way.

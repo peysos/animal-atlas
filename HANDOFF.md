@@ -13,11 +13,13 @@ C:\Users\pkepe\OneDrive\Desktop\My computer\vibecode\Animal Atlas\
 | `animal-evolution-tree.html` | **Card site** ("Animal Atlas") — flat card tree served at `http://localhost:8080/` |
 | `full-animal-tree.html` | **D3 site** — zoomable d3 tree served at `http://localhost:8080/full` · **SOURCE OF TRUTH for all data** |
 | `favicon.svg` | site icon |
+| `entry-editor.js` | shared per-entry text/image editor and read-only information window |
+| `entry-content.js` | published content/configuration; editing enabled for testing, no user content published yet |
 | `tools\` | All build/verify PowerShell scripts (copied out of temp — treat these as the canonical copies) |
 | `backups\` | `*-v2.7.html` snapshot of both sites taken 2026-11-06 **before** the v2.8 color work |
 | `HANDOFF.md` | This file |
 
-The files are plain single-file HTML (no build step, no dependencies except d3 from a CDN on the full page). Everything lives in one `<script>` inside each file.
+The charts are plain HTML with no build step. The full chart loads D3 from its existing CDN; both pages load the shared entry-content.js and entry-editor.js assets for entry information. Taxonomy and chart behavior otherwise remain in each page’s inline script.
 
 ## 2. What the project is
 
@@ -131,6 +133,8 @@ Current kind+accent census in `S` (981): blank 1·domain 3·kingdom 2·clade 33�
 
 **Phone support (v5.6, both sites):** everything is limited to touch input or `@media(max-width:650px)`, so desktop is unchanged. `.view,#v{touch-action:none}` hands finger gestures to the page instead of the browser (it has no effect on mouse use). Card site: the original one-finger drag code still pans; a separate pointer-tracking block adds two-finger pinch (scales `s` around the moving midpoint, then `snapTarget()`/`draw()`), and lifting one finger hands panning back to the other. D3 site: d3.zoom already handles touch drag and pinch once `touch-action` is off. Narrow screens get a compact header (30px logo, 17px one-line title, no subtitle) and a 🔍 `#srchBtn` that toggles `html.srch-open`, which shows the search box full-width under the scrolling bar; picking a result or pressing Enter closes it and blurs the input (only when the 🔍 button is visible). On touch screens at that width the + and − buttons (class `zb`, card site only) are hidden. `phoneView()` opens phones zoomed in on Animalia at scale 0.55 (runs on load, `pageshow` and width changes); Reset still fits the whole tree. Resize refits are skipped on touch devices when only the height changed, so the phone keyboard opening does not reset the view. The rebuild only rewrites `fitView()`, so none of this is regenerated. The D3 hint switches to "pinch to zoom" on touch screens.
 
+**Entry editor test (v5.7, 2026-11-12):** one click/tap on an entry opens a shared native-dialog editor for user-written text, images and captions. Save uses IndexedDB in the current browser/site origin; it does not publish user content. Card and D3 views share drafts on the same origin. Download backup exports all saved entries plus the current draft; Restore backup validates and merges atomically after confirmation. Failed saves retain drafts and offer backup recovery. This replaces the old double-tap copy gesture; Copy name is in the dialog. Navigation arrows remain independent. Keyboard entry activation and Escape work. `entry-content.js` currently has editingEnabled:true and empty published entries. To remove editing later, first preserve/publish the user’s latest exported text/images, then set editingEnabled:false; the information window remains as a reader. Never remove local storage or publish test fixtures. See [user workflow and implementation](docs/entry-editor.md). The feature changes no taxa or addition counter.
+
 ## 7. Text/alias conventions
 
 - Extinct entries: subtitle starts with "extinct …"; title gets the † prefix **at render time only** (D3 label code + card template must use the accent test `a-ext`, NOT `kind==='fossil'` — that kind no longer exists in data).
@@ -180,6 +184,8 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 9. **PowerShell functions return everything they print.** A helper that prints a status string and then returns text hands back both, and writing that result puts the status text at the top of the file. Use `Write-Host` for messages inside such helpers, and check that the file still starts with `<!doctype html>` before moving on.
 
 ## 10. Version history
+
+- **v5.7 editor test (2026-11-12)** — added the shared per-entry editor to both charts, with text, images, captions, local save, backup/restore, safe read-only publication mode and keyboard access. No user-authored content supplied or published. Counts stay 981 taxa / 980 links; counter stays 0/5. See docs/entry-editor.md and tools/verify-entry-editor.cjs.
 
 - **v5.7 (2026-11-12)** — the fifth separate single-entry request triggers the new automatic +0.1 rule. Added Ichthyornis under Ichthyornithidae under Ichthyornithiformes under Maniraptora, outside the chart’s crown-bird Aves branch. Placement as a stem bird follows [Benito et al. (2022)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9762251/); conventional family/order names follow the [Smithsonian classification](https://repository.si.edu/server/api/core/bitstreams/f0a2e9c2-28f7-44f0-894d-abd3cb6d43d6/content). Both badges and changelogs are v5.7. Completed cycle: Nigersaurus, Utahraptor, Sarcosuchus, Mesopithecus, Ichthyornis; ledger reset to 0/5 for v5.8. 981 taxa / 980 links; card world 52295 x 4400. Both charts match; no removed taxa, overlaps, clipped card names or card-chart connector crossings; one LUCA root, search and release notes work, no runtime errors.
 

@@ -9,4 +9,8 @@ An interactive evolutionary tree of animal life: over 900 living and extinct ani
 
 Features include search by scientific or common name, a scrolling bar of every order and family, highlight filters (by rank, extinct only, living only, key evolutionary steps), several themes including Fossil and T. rex, double-tap to copy a name, and full phone support (pinch to zoom).
 
-Both pages are single self-contained HTML files with no build step. `full-animal-tree.html` holds the data; `HANDOFF.md` explains the data format and the rebuild pipeline in `tools/`.
+Both pages are plain HTML files with shared entry-editor assets and no build step. `full-animal-tree.html` holds the data; `HANDOFF.md` explains the data format and the rebuild pipeline in `tools/`.
+
+## Write your own entry information
+
+Click any entry once to open the test editor, write text, add images and captions, then Save. Work is stored only in your current browser; it is not automatically published. Download a backup regularly so it can be restored or used to publish the finished content. [Editor guide](docs/entry-editor.md).
