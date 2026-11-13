@@ -8,7 +8,6 @@
   const allowedImage = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
   let dbPromise, current = null, dirty = false, busy = false, opener = null, loadToken = 0;
   let storedAtOpen = null;
-  let lastEntryName = null, lastEntryTap = 0;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -133,11 +132,10 @@
   function close() {
     if (busy) return;
     if (dirty && !window.confirm('Close without saving your changes?')) return;
-    ++loadToken; dialog.close(); current = null; dirty = false; lastEntryName = null; opener?.focus({ preventScroll: true });
+    ++loadToken; dialog.close(); current = null; dirty = false; opener?.focus({ preventScroll: true });
   }
   async function open(name, subtitle = '') {
     if (dialog.open) return;
-    lastEntryName = null;
     opener = document.activeElement; const token = ++loadToken;
     name = canonical(name); current = { name, text: '', images: [] }; storedAtOpen = null; dirty = false;
     $('#ee-title').textContent = name; $('#ee-subtitle').textContent = subtitle;
@@ -251,11 +249,8 @@
       }
     });
   });
-  function activate(name, subtitle) {
-    if (dialog.open) return;
-    const now = Date.now(), key = canonical(name);
-    if (lastEntryName === key && now - lastEntryTap < 400) { lastEntryName = null; open(name, subtitle); }
-    else { lastEntryName = key; lastEntryTap = now; }
+  function activate(name, subtitle, wasSelected = false) {
+    if (!dialog.open && wasSelected) open(name, subtitle);
   }
   window.AnimalAtlasEntries = { open, activate };
 })();

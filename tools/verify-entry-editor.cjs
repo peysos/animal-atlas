@@ -36,8 +36,12 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     });
     await page.locator('.card[data-name="Nigersaurus"]').click();
     assert.equal(await page.locator('.entry-editor').isVisible(), false);
-    await page.waitForTimeout(450);
-    await page.locator('.card[data-name="Nigersaurus"]').dblclick();
+    assert.equal(await page.locator('.card[data-name="Nigersaurus"]').evaluate(e => e.classList.contains('active')), true);
+    await page.locator('.card[data-name="Tyrannosaurus"]').dispatchEvent('click');
+    await page.locator('.card[data-name="Nigersaurus"]').click();
+    assert.equal(await page.locator('.entry-editor').isVisible(), false);
+    await page.waitForTimeout(650);
+    await page.locator('.card[data-name="Nigersaurus"]').click();
     await ready(page);
     assert.equal(await page.locator('#ee-title').innerText(), 'Nigersaurus');
     const text = 'My information\n<em>Plain text, not HTML</em>';
@@ -78,7 +82,11 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
       const d = r.descendants().find(d => d.data.id === 'nigersaurus');
       V.call(zoom.transform, d3.zoomIdentity.translate(innerWidth / 2 - d.x, (innerHeight - 100) / 2 + d.y));
     });
-    await full.locator('.n').filter({ has: full.locator('.t', { hasText: 'Nigersaurus' }) }).dblclick();
+    const fullEntry = full.locator('.n').filter({ has: full.locator('.t', { hasText: 'Nigersaurus' }) });
+    await fullEntry.click();
+    assert.equal(await full.locator('.entry-editor').isVisible(), false);
+    await full.waitForTimeout(650);
+    await fullEntry.click();
     await ready(full);
     assert.equal(await full.locator('#ee-text').inputValue(), text);
     await open(page, 'Nigersaurus');
@@ -99,6 +107,7 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     });
     await phone.locator('.card[data-name="Nigersaurus"]').tap();
     assert.equal(await phone.locator('.entry-editor').isVisible(), false);
+    await phone.waitForTimeout(650);
     await phone.locator('.card[data-name="Nigersaurus"]').tap(); await ready(phone);
     assert.equal(await phone.locator('#ee-text').inputValue(), '');
     phone.once('dialog', d => d.accept());
@@ -141,6 +150,6 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     const rescue = JSON.parse(await fs.readFile(await (await rescuePromise).path(), 'utf8'));
     assert.equal(rescue.entries[0].text, 'Rescue my draft');
     assert.deepEqual(errors, []);
-    console.log('PASS: single-click selection, double-click opening in both views, enlarged images on desktop/phone/read-only views, text/image save, captions, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, image removal, entry isolation, invalid import, safe text rendering, storage-failure recovery.');
+    console.log('PASS: single-click selection, clicking the selected entry opens without a timing limit on desktop/D3/phone, switching selection, enlarged images, text/image save, captions, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, image removal, entry isolation, invalid import, safe text rendering, storage-failure recovery.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
