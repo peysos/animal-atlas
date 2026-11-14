@@ -29,6 +29,32 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     const ready = p => p.waitForFunction(() => document.querySelector('.entry-editor').open && !document.querySelector('#ee-text').disabled);
     const open = async (p, name) => { await p.evaluate(n => window.AnimalAtlasEntries.open(n), name); await ready(p); };
     const save = async p => { await p.locator('.ee-save').click(); await p.waitForFunction(() => document.querySelector('.ee-status').textContent.startsWith('Saved in')); };
+    const checkGallery = async p => {
+      await p.locator('.ee-images img').first().click();
+      assert.equal(await p.locator('.ee-viewer-count').innerText(), '1 / 3');
+      assert.equal(await p.locator('.ee-viewer-prev').isVisible(), false);
+      assert.equal(await p.locator('.ee-viewer-next').isVisible(), true);
+      await p.locator('.ee-viewer-next').click();
+      assert.equal(await p.locator('.ee-viewer-count').innerText(), '2 / 3');
+      assert.equal(await p.locator('.ee-image-viewer figcaption').innerText(), 'Second image');
+      assert.equal(await p.locator('.ee-viewer-prev').isVisible(), true);
+      assert.equal(await p.locator('.ee-viewer-next').isVisible(), true);
+      await p.locator('.ee-viewer-next').click();
+      assert.equal(await p.locator('.ee-viewer-count').innerText(), '3 / 3');
+      assert.equal(await p.locator('.ee-viewer-next').isVisible(), false);
+      assert.equal(await p.locator('.ee-image-viewer figcaption').innerText(), 'Third image');
+      await p.keyboard.press('ArrowRight');
+      assert.equal(await p.locator('.ee-viewer-count').innerText(), '3 / 3');
+      await p.keyboard.press('ArrowLeft');
+      assert.equal(await p.locator('.ee-viewer-count').innerText(), '2 / 3');
+      await p.locator('.ee-viewer-prev').click();
+      assert.equal(await p.locator('.ee-viewer-count').innerText(), '1 / 3');
+      await p.keyboard.press('Escape');
+      assert.equal(await p.locator('.entry-editor').isVisible(), true);
+      await p.locator('.ee-images img').nth(2).click();
+      assert.equal(await p.locator('.ee-viewer-count').innerText(), '3 / 3');
+      await p.locator('.ee-viewer-close').click();
+    };
     await page.goto('https://atlas.test/animal-evolution-tree.html');
     await page.evaluate(() => {
       const n = D.find(n => n[0] === 'Nigersaurus'); s = ts = 1;
@@ -58,11 +84,24 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     assert.equal(await page.locator('.ee-image-viewer').isVisible(), true);
     assert.ok(await page.locator('.ee-image-viewer img').evaluate(img => img.getBoundingClientRect().width) > thumbnailWidth);
     assert.equal(await page.locator('.ee-image-viewer figcaption').innerText(), 'My credit');
+    assert.equal(await page.locator('.ee-viewer-prev').isVisible(), false);
+    assert.equal(await page.locator('.ee-viewer-next').isVisible(), false);
     await page.keyboard.press('Escape');
     assert.equal(await page.locator('.ee-image-viewer').isVisible(), false);
     assert.equal(await page.locator('.entry-editor').isVisible(), true);
     assert.equal(await page.locator('#ee-text').inputValue(), text);
     assert.equal(await page.locator('.ee-caption').inputValue(), 'My credit');
+    await page.locator('#ee-files').setInputFiles([
+      { name: 'second.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') },
+      { name: 'third.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') }
+    ]);
+    await page.waitForFunction(() => document.querySelectorAll('.ee-images img').length === 3 && !document.querySelector('#ee-text').disabled);
+    await page.locator('.ee-caption').nth(1).fill('Second image');
+    await page.locator('.ee-caption').nth(2).fill('Third image');
+    await checkGallery(page);
+    assert.equal(await page.locator('#ee-text').inputValue(), text);
+    await page.locator('.ee-remove').nth(2).click();
+    await page.locator('.ee-remove').nth(1).click();
     await save(page);
     const downloadPromise = page.waitForEvent('download');
     await page.locator('.ee-export').click();
@@ -121,20 +160,34 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     assert.equal(await phone.locator('.ee-image-viewer').evaluate(e => e.scrollWidth <= e.clientWidth), true);
     await phone.locator('.ee-viewer-close').tap();
     assert.equal(await phone.locator('.entry-editor').isVisible(), true);
+    await phone.locator('#ee-files').setInputFiles([
+      { name: 'second.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') },
+      { name: 'third.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') }
+    ]);
+    await phone.waitForFunction(() => document.querySelectorAll('.ee-images img').length === 3 && !document.querySelector('#ee-text').disabled);
+    await phone.locator('.ee-caption').nth(1).scrollIntoViewIfNeeded();
+    await phone.locator('.ee-caption').nth(1).fill('Second image');
+    await phone.locator('.ee-caption').nth(2).scrollIntoViewIfNeeded();
+    await phone.locator('.ee-caption').nth(2).fill('Third image');
+    await checkGallery(phone);
+    await phone.locator('.ee-remove').nth(2).click();
+    await phone.locator('.ee-remove').nth(1).click();
     await phone.locator('.ee-remove').click(); await save(phone); await phone.locator('.ee-close').click();
     await open(phone, 'Tyrannosaurus'); assert.equal(await phone.locator('#ee-text').inputValue(), '');
     await phone.locator('#ee-backup').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{"format":"wrong"}') });
     await phone.waitForFunction(() => document.querySelector('.ee-status').dataset.error === 'true');
 
     const reader = await context.newPage();
-    await reader.route('**/entry-content.js', route => route.fulfill({ body: 'window.ANIMAL_ATLAS_CONTENT=' + JSON.stringify({ editingEnabled: false, entries: { Nigersaurus: backup.entries[0] } }), contentType: 'application/javascript' }));
+    const publishedEntry = { ...backup.entries[0], images: [backup.entries[0].images[0], { ...backup.entries[0].images[0], caption: 'Second image' }, { ...backup.entries[0].images[0], caption: 'Third image' }] };
+    await reader.route('**/entry-content.js', route => route.fulfill({ body: 'window.ANIMAL_ATLAS_CONTENT=' + JSON.stringify({ editingEnabled: false, entries: { Nigersaurus: publishedEntry } }), contentType: 'application/javascript' }));
     await reader.goto('https://atlas.test/animal-evolution-tree.html');
     await open(reader, 'Nigersaurus');
     assert.equal(await reader.locator('.ee-save').isVisible(), false);
     assert.equal(await reader.locator('.ee-read-text').innerText(), text);
     assert.equal(await reader.locator('.ee-read-text em').count(), 0);
-    assert.equal(await reader.locator('.ee-images img').count(), 1);
-    await reader.locator('.ee-images img').click();
+    assert.equal(await reader.locator('.ee-images img').count(), 3);
+    await checkGallery(reader);
+    await reader.locator('.ee-images img').first().click();
     assert.equal(await reader.locator('.ee-image-viewer').isVisible(), true);
     await reader.locator('.ee-viewer-close').click();
 
@@ -150,6 +203,6 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     const rescue = JSON.parse(await fs.readFile(await (await rescuePromise).path(), 'utf8'));
     assert.equal(rescue.entries[0].text, 'Rescue my draft');
     assert.deepEqual(errors, []);
-    console.log('PASS: single-click selection, clicking the selected entry opens without a timing limit on desktop/D3/phone, switching selection, enlarged images, text/image save, captions, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, image removal, entry isolation, invalid import, safe text rendering, storage-failure recovery.');
+    console.log('PASS: selected-entry opening on desktop/D3/phone; single/multiple-image navigation, boundaries, captions, keyboard and arbitrary starting image on desktop/phone/read-only views; text/image save, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, removal, entry isolation, invalid import, safe text rendering, storage-failure recovery.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

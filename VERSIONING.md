@@ -10,11 +10,13 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 
 ## Current state
 
-- Current version: **v5.7**
-- Pending separate single-entry requests: **1 / 5**
-- Next automatic single-entry version bump: **v5.8**, after four more qualifying requests. A batch request can trigger it sooner.
+- Current version: **v5.8**
+- Pending separate single-entry requests: **0 / 5**
+- Next automatic single-entry version bump: **v5.9**, after five more qualifying requests. A batch request can trigger it sooner.
 
-## Current cycle — toward v5.8
+## Completed release — v5.8
+
+The batch request on 2026-11-14 added Elginia, Hypsognathus (requested as Hypsognattus), Amargasaurus and Dilophosaurus. Coelacanths were already present as Latimeria and were not duplicated. The batch triggered exactly one version bump and reset the pending counter. The preceding separate addition is retained below for history.
 
 | Count | Added entry | Request date |
 |---|---|---|
@@ -22,7 +24,7 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 
 ## Completed cycle — v5.7
 
-The following five separate addition requests completed the v5.7 cycle; the new cycle is tracked above.
+The following five separate addition requests completed the v5.7 cycle; this ledger is retained for history.
 
 | Count | Added entry | Request date |
 |---|---|---|

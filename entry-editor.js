@@ -21,7 +21,7 @@
     .entry-editor .ee-label{display:block;margin-bottom:7px;font-weight:bold}.entry-editor textarea{width:100%;min-height:200px;resize:vertical;background:#0002;color:inherit;border:1px solid #66877d;border-radius:10px;padding:12px;font:inherit;line-height:1.65}
     .entry-editor .ee-images-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:22px 0 12px}.entry-editor h3{margin:0;font:700 17px Georgia,serif}.entry-editor .ee-upload input{position:absolute;width:1px;height:1px;opacity:0}
     .entry-editor .ee-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.entry-editor figure{margin:0;padding:9px;background:#ffffff06;border:1px solid #ffffff20;border-radius:11px;min-width:0}.entry-editor figure img{display:block;width:100%;height:140px;object-fit:contain;border-radius:6px;background:#0002}
-    .entry-editor .ee-caption{width:100%;margin:8px 0;background:#0002;border:1px solid #66877d;color:inherit;border-radius:6px;padding:7px;font:11px/1.5 ui-monospace,Consolas,monospace}.entry-editor figcaption{overflow-wrap:anywhere;font-size:11px;margin-top:8px;white-space:pre-wrap}
+    .entry-editor .ee-caption{display:block;width:100%;margin:8px 0;background:#0002;border:1px solid #66877d;color:inherit;border-radius:6px;padding:7px;font:11px/1.5 ui-monospace,Consolas,monospace}.entry-editor figcaption{overflow-wrap:anywhere;font-size:11px;margin-top:8px;white-space:pre-wrap}
     .entry-editor .ee-remove{font-size:11px;padding:4px 8px}.entry-editor .ee-empty{margin:6px 0;color:#bdcec4;font-size:12px}.entry-editor .ee-footer{padding:16px 24px;border-top:1px solid #ffffff20;display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#ffffff05}
     .entry-editor .ee-save{background:#2c6756;border-color:#8ebfac;font-weight:bold}.entry-editor .ee-status{flex:1 1 100%;min-height:20px;margin:0;color:#bdcec4;font-size:11px}.entry-editor .ee-status[data-error=true]{color:#ffb6a8}.entry-editor .ee-read-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}
     .entry-editor .ee-time{font-size:10px;color:#bdcec4;margin:10px 0 0}.entry-editor [hidden]{display:none!important}
@@ -31,6 +31,9 @@
     .ee-image-viewer .ee-viewer-close{align-self:flex-end;background:#ffffff0a;color:inherit;border:1px solid #66877d;border-radius:8px;padding:8px 12px;font:13px ui-monospace,Consolas,monospace;cursor:pointer}
     .ee-image-viewer .ee-viewer-close:focus-visible{outline:2px solid #a5d5c2;outline-offset:3px}.ee-image-viewer figure{display:flex;flex-direction:column;flex:1;min-height:0;margin:0}
     .ee-image-viewer img{display:block;flex:1;min-height:0;width:100%;height:100%;object-fit:contain}.ee-image-viewer figcaption{flex:none;max-height:18dvh;overflow:auto;margin-top:10px;font:12px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:center}
+    .ee-image-viewer .ee-viewer-nav{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:42px;height:48px;padding:0;background:#071b20dc;color:#eef6ef;border:1px solid #9bb7ab;border-radius:9px;font:28px Georgia,serif;cursor:pointer;box-shadow:0 3px 12px #0008;z-index:1}
+    .ee-image-viewer .ee-viewer-prev{left:20px}.ee-image-viewer .ee-viewer-next{right:20px}.ee-image-viewer .ee-viewer-nav:hover{background:#28534c}.ee-image-viewer .ee-viewer-nav:focus-visible{outline:2px solid #a5d5c2;outline-offset:3px}.ee-image-viewer [hidden]{display:none!important}
+    .ee-image-viewer .ee-viewer-count{position:absolute;top:24px;left:24px;color:#bdcec4;font:12px ui-monospace,Consolas,monospace}
     @media(max-width:650px){.entry-editor{width:96vw;max-height:94dvh;border-radius:13px}.entry-editor header{padding:16px}.entry-editor h2{font-size:21px}.entry-editor .ee-main{padding:17px 16px}.entry-editor .ee-footer{padding:14px 16px}.entry-editor .ee-images{grid-template-columns:repeat(2,minmax(0,1fr))}.entry-editor textarea{min-height:180px;font-size:16px}.entry-editor .ee-caption{font-size:16px}.entry-editor figure img{height:115px}.entry-editor .ee-footer button{flex:1 1 auto}}
   `;
   document.head.append(style);
@@ -50,18 +53,43 @@
   document.body.append(dialog);
   const imageViewer = document.createElement('dialog');
   imageViewer.className = 'ee-image-viewer'; imageViewer.setAttribute('aria-label', 'Enlarged entry image');
-  imageViewer.innerHTML = '<button type="button" class="ee-viewer-close" aria-label="Close enlarged image">Close ×</button><figure><img alt=""><figcaption></figcaption></figure>';
+  imageViewer.innerHTML = '<span class="ee-viewer-count" aria-live="polite"></span><button type="button" class="ee-viewer-close" aria-label="Close enlarged image">Close ×</button><button type="button" class="ee-viewer-nav ee-viewer-prev" aria-label="Previous image" hidden>‹</button><button type="button" class="ee-viewer-nav ee-viewer-next" aria-label="Next image" hidden>›</button><figure><img alt=""><figcaption></figcaption></figure>';
   document.body.append(imageViewer);
-  let imageOpener = null;
+  let imageOpener = null, imageIndex = 0;
   function closeImage() { imageViewer.close(); imageViewer.querySelector('img').removeAttribute('src'); imageOpener?.focus({ preventScroll: true }); }
   function enlargeImage(image, button) {
     imageOpener = button;
+    imageIndex = current.images.indexOf(image);
+    if (imageIndex < 0) return;
+    showViewerImage();
+    imageViewer.showModal();
+  }
+  function showViewerImage() {
+    const image = current.images[imageIndex];
     const picture = imageViewer.querySelector('img'), caption = imageViewer.querySelector('figcaption');
     picture.src = image.data; picture.alt = image.caption || `Image of ${current.name}`;
     caption.textContent = image.caption || current.name;
-    imageViewer.showModal();
+    const previous = imageViewer.querySelector('.ee-viewer-prev'), next = imageViewer.querySelector('.ee-viewer-next');
+    const focused = document.activeElement;
+    previous.hidden = imageIndex === 0; next.hidden = imageIndex === current.images.length - 1;
+    const count = imageViewer.querySelector('.ee-viewer-count');
+    count.textContent = `${imageIndex + 1} / ${current.images.length}`; count.hidden = current.images.length < 2;
+    if (focused === previous && previous.hidden) (next.hidden ? imageViewer.querySelector('.ee-viewer-close') : next).focus();
+    if (focused === next && next.hidden) (previous.hidden ? imageViewer.querySelector('.ee-viewer-close') : previous).focus();
   }
-  imageViewer.querySelector('button').addEventListener('click', closeImage);
+  function moveImage(direction) {
+    const target = imageIndex + direction;
+    if (target < 0 || target >= current.images.length) return;
+    imageIndex = target; showViewerImage();
+  }
+  imageViewer.querySelector('.ee-viewer-close').addEventListener('click', closeImage);
+  imageViewer.querySelector('.ee-viewer-prev').addEventListener('click', () => moveImage(-1));
+  imageViewer.querySelector('.ee-viewer-next').addEventListener('click', () => moveImage(1));
+  imageViewer.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault(); event.stopPropagation(); moveImage(event.key === 'ArrowLeft' ? -1 : 1);
+    }
+  });
   imageViewer.addEventListener('cancel', event => { event.preventDefault(); event.stopPropagation(); closeImage(); });
   imageViewer.addEventListener('click', event => {
     const bounds = imageViewer.getBoundingClientRect();

@@ -8,7 +8,7 @@ Use **Download backup** regularly. The JSON download includes all entries saved 
 
 **Copy name** is in the information window. A click/tap selects an entry; clicking/tapping that selected entry opens its window. Selecting a different entry starts with selection again. It replaces the old double-tap copying gesture. Navigation arrows continue to navigate without opening the editor. Enter or Space opens a focused entry, Escape closes it, and Ctrl/Cmd+S saves while the editor is open. Closing with unsaved changes asks before discarding them.
 
-Click or tap an image to open a larger, screen-fitting view with its caption. Close that view with the Close button, Escape, or a click outside it. The entry remains open and unsaved writing is preserved. This works in both editing and read-only modes.
+Click or tap an image to open a larger, screen-fitting view with its caption. Close that view with the Close button, Escape, or a click outside it. The entry remains open and unsaved writing is preserved. This works in both editing and read-only modes. For entries with several images, use the left/right buttons in the enlarged view to browse them, or press the left/right arrow keys. The first photo has only a next arrow, the last has only a previous arrow, and middle photos have both; single photos have neither. Navigation preserves captions, image order and unsaved work.
 
 ## When the content is ready
 
@@ -24,7 +24,7 @@ Never turn off editing before obtaining and preserving the user's latest backup.
 - Editing mode displays the browser's local record, falling back to published content. Read-only mode uses published content and ignores private local drafts.
 - A save compares the loaded record's timestamp with the currently stored one inside the same write transaction. Conflicting tabs produce an error instead of silently overwriting saved work. Failed saves retain the draft and keep backup download available.
 - Backups are versioned (`format: animal-atlas-entry-backup`, `schemaVersion: 1`) and validated before one atomic import transaction. User text/captions are rendered as text, never HTML; imported image data must be a JPEG, PNG or WebP data URL.
-- The rebuild pipeline preserves the editor includes and handlers. No taxonomy data or coordinates were changed for this feature. The version remains v5.7 and the single-entry addition counter remains 0/5.
+- The rebuild pipeline preserves the editor includes and handlers. No taxonomy data or coordinates were changed for this feature. See VERSIONING.md for the current release and addition counter.
 
 ## Verification
 
