@@ -29,7 +29,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**994 taxa / 993 links. No further removals without explicit consent; every retained node keeps a parent, exactly one root (LUCA).**
+**995 taxa / 994 links. No further removals without explicit consent; every retained node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -62,8 +62,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 994 · Bad parent indices: 0 · Overlapping card pairs: 0
-#      Only in manual: 0 · Only in D3: 0 · World: 52556 x 4400 · Root: LUCA parent=null
+#    → must print: Manual nodes: 995 · Bad parent indices: 0 · Overlapping card pairs: 0
+#      Only in manual: 0 · Only in D3: 0 · World: 52777 x 4400 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
 ```
@@ -74,10 +74,10 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa without explicit consent.** Every retained entry stays connected; no orphans; one root. On 2026-11-14 the user explicitly requested simplifying repeated family/genus pairs across the chart. Fifty named genus boxes were removed, their family boxes retained, search redirected and original saved-page keys preserved via entry-groups.js. See docs/combined-entries-v6.0.md; do not expand this removal list automatically.
-2. **Version badge** follows [VERSIONING.md](VERSIONING.md): +0.1 after five separate single-entry addition requests, or exactly once per batch request. Supporting taxonomy nodes are not extra requested animals; duplicates and non-addition edits do not count. Explicit version requests take precedence. Current **v6.0**, counter **0 / 5**, after the 2026-11-14 batch of 21 requested genera. Next automatic +0.1 release is v6.1. Persist the ledger in VERSIONING.md and keep both badges/changelogs in sync.
+2. **Version badge** follows [VERSIONING.md](VERSIONING.md): +0.1 after five separate single-entry addition requests, or exactly once per batch request. Supporting taxonomy nodes are not extra requested animals; duplicates and non-addition edits do not count. Explicit version requests take precedence. Current **v6.0**, counter **1 / 5** (Arctocebus / angwantibos), after the 2026-11-14 batch release. Next automatic +0.1 release is v6.1. Persist the ledger in VERSIONING.md and keep both badges/changelogs in sync.
 3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v6.0 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 994 cards / 993 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 995 cards / 994 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -118,9 +118,9 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (994): blank 1·domain 3·kingdom 2·clade 33·root 1·phylum 14·class 29·genus 288·genus+a-ext 150·clade+a-ext 5·class+a-ext 2·family 262·subphylum 7·superorder 3·order+a-ext 15·family+a-ext 62·suborder+a-ext 1·order 101·suborder 4·subfamily 2·tribe 2·subtribe 1·infraclass 2·subclass 3·subclass+a-ext 1 (blank = LUCA).
+Current kind+accent census in `S` (995): blank 1·domain 3·kingdom 2·clade 33·root 1·phylum 14·class 29·genus 289·genus+a-ext 150·clade+a-ext 5·class+a-ext 2·family 262·subphylum 7·superorder 3·order+a-ext 15·family+a-ext 62·suborder+a-ext 1·order 101·suborder 4·subfamily 2·tribe 2·subtribe 1·infraclass 2·subclass 3·subclass+a-ext 1 (blank = LUCA).
 
-**Card name sizing (v5.5):** `fitCardNames()` measures the bold name (including an extinct dagger) with the rendered font and widens only cards that need it. Base widths remain 104px for families and 124px for other ranks; names stay on one line while subtitles wrap naturally. It runs after card creation and again after fonts are ready. The rebuild preserves this hand-maintained code. Verified all 994 names fit, with no card overlaps or connector crossings.
+**Card name sizing (v5.5):** `fitCardNames()` measures the bold name (including an extinct dagger) with the rendered font and widens only cards that need it. Base widths remain 104px for families and 124px for other ranks; names stay on one line while subtitles wrap naturally. It runs after card creation and again after fonts are ready. The rebuild preserves this hand-maintained code. Verified all 995 names fit, with no card overlaps or connector crossings.
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
@@ -185,6 +185,9 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 9. **PowerShell functions return everything they print.** A helper that prints a status string and then returns text hands back both, and writing that result puts the status text at the top of the file. Use `Write-Host` for messages inside such helpers, and check that the file still starts with `<!doctype html>` before moving on.
 
 ## 10. Version history
+
+- **v6.0 addition (2026-11-14, counter 1/5)** — added Arctocebus (golden and Calabar angwantibos) directly under existing Lorisidae, beside Nycticebus. Placement confirmed by the ASM Mammal Diversity Database: [golden angwantibo](https://www.mammaldiversity.org/taxon/1001070/) and [Calabar angwantibo](https://www.mammaldiversity.org/taxon/1001071/). The family subtitle now includes angwantibos. Existing living-genus colors; search includes angwantibo, golden potto and both species names. 995 taxa / 994 links; card world 52777 x 4400. Both charts match; no missing/renamed/reparented existing entries, overlaps, clipped card names or card connector crossings; one LUCA root, ten new search checks, release notes synchronized and no runtime errors. Shared editor/config/combined-entry mappings unchanged; saved work preserved. Version remains v6.0; four more separate qualifying requests trigger v6.1.
+
 
 - **v6.0 cleanup (2026-11-14, user-authorized removal)** — simplified 50 repeated family/genus boxes across the chart, including Apteryx, Dinornis, Rhea and Struthio. Each retains its family box, scientific/common-name search aliases and original saved-content access via the shared editor’s Saved pages links. Family and genus records remain independent; no browser data is renamed, merged or deleted. Full list: [combined entries](docs/combined-entries-v6.0.md). 994 taxa / 993 links; card world 52556 x 4400. No other taxa/parents/titles changed. Both charts match, all 50 redirected genus searches pass on both views, no overlaps/clipped names/card connector crossings, one LUCA root, no runtime errors. Expanded editor tests cover saved keys/text/images, independent pages, backups, restore, discard protection and desktop/D3/phone/read-only access. Version stays v6.0; counter stays 0/5 toward v6.1.
 
