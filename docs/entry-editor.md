@@ -10,6 +10,12 @@ Use **Download backup** regularly. The JSON download includes all entries saved 
 
 Click or tap an image to open a larger, screen-fitting view with its caption. Close that view with the Close button, Escape, or a click outside it. The entry remains open and unsaved writing is preserved. This works in both editing and read-only modes. For entries with several images, use the left/right buttons in the enlarged view to browse them, or press the left/right arrow keys. The first photo has only a next arrow, the last has only a previous arrow, and middle photos have both; single photos have neither. Navigation preserves captions, image order and unsaved work.
 
+## Combined family/genus boxes
+
+Some repeating genus boxes were removed at the user’s request. Their scientific names and common-name aliases now find the retained family. When that family or its former genus has another saved page, a **Saved pages** row lets you open the original records. Family and genus pages keep their own scientific-name storage keys, text, captions and images; no automatic merging, renaming or deletion occurs. Switching with unsaved changes asks before discarding them. Backups still include both records, and restoring an older genus record makes it accessible from the family immediately. The same links work with published content in read-only mode.
+
+The mapping lives in entry-groups.js, loaded before the shared editor in both charts. A former genus with no saved/published content does not add extra buttons to the family window.
+
 ## When the content is ready
 
 Download a fresh backup and provide it for publication. The text and images must first be preserved in the site's published content. After verifying that published content, set `editingEnabled: false` in `entry-content.js`. Both chart views then open a read-only information window with the published text, images and captions; Save, upload, backup and restore controls are hidden. Editing remains enabled for the current test.
@@ -18,6 +24,7 @@ Never turn off editing before obtaining and preserving the user's latest backup.
 
 ## Implementation notes
 
+- `entry-groups.js` lists the retained family and former genus pages without storing user-authored content.
 - `entry-editor.js` is shared by both views. Native `dialog`, scoped CSS and theme variables keep the existing chart layout intact. The chart's click handler calls `AnimalAtlasEntries.activate(scientificName, subtitle, wasSelected)` with selection state captured before updating the highlight. An already-selected entry opens without any timing requirement. Keyboard activation and the programmatic `open` method open immediately.
 - `entry-content.js` is the future published content store/configuration, currently with an empty `entries` object. Published records use the same format as backup records.
 - IndexedDB database `animal-atlas-entries`, object store `entries`, holds records `{name, text, images: [{data, caption}], updatedAt}`. Images are data URLs. Canonical scientific names are keys; `Animalia / Metazoa` maps to `Animalia` so both chart views share that entry. Renaming a taxon in future requires retaining or migrating its saved key.
@@ -30,4 +37,4 @@ Never turn off editing before obtaining and preserving the user's latest backup.
 
 `tools/verify-entry-editor.cjs` requires Playwright. Run it with Node and set `ATLAS_CHROME_PATH` if using an installed Chrome executable. Set `ATLAS_D3_PATH` to a local D3 bundle for offline verification, or allow the page's existing CDN dependency. The test routes site files from this repository to an isolated test origin and does not modify repository files or user browser data.
 
-Checks cover single-click highlighting, clicking selected entries after a delay, changing selection, enlarged images on desktop/phone/read-only views, actual chart activation in both views, text and image saving, captions, reloads, shared records, conflicting tabs, unsaved-close protection, backup download/restoration in a fresh browser, narrow phone layout, image removal, independent entries, invalid imports, read-only publication, safe plain-text rendering and backup recovery when browser storage fails.
+Checks cover single-click highlighting, clicking selected entries after a delay, changing selection, enlarged images on desktop/phone/read-only views, actual chart activation in both views, text and image saving, captions, reloads, shared records, conflicting tabs, unsaved-close protection, backup download/restoration in a fresh browser, narrow phone layout, image removal, independent entries, invalid imports, read-only publication, safe plain-text rendering and backup recovery when browser storage fails, plus combined-box access to original family/genus keys, text and images, separate saves, unsaved-switch protection, backups/restoration and desktop/D3/phone/read-only access.

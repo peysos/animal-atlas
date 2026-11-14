@@ -2,6 +2,7 @@
   'use strict';
   const config = window.ANIMAL_ATLAS_CONTENT || { editingEnabled: true, entries: {} };
   const editing = config.editingEnabled !== false;
+  const groups = Object.values(window.ANIMAL_ATLAS_ENTRY_GROUPS || {});
   const canonical = name => name === 'Animalia / Metazoa' ? 'Animalia' : name;
   const MAX_IMAGES = 12;
   const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
@@ -18,6 +19,7 @@
     .entry-editor button,.entry-editor .ee-upload{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#ffffff0a;color:inherit;border:1px solid #66877d;border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer;white-space:nowrap}
     .entry-editor button:hover,.entry-editor .ee-upload:hover{background:#ffffff18;border-color:#bcd3c7}.entry-editor button:focus-visible,.entry-editor textarea:focus-visible,.entry-editor input:focus-visible,.entry-editor .ee-upload:focus-within{outline:2px solid #a5d5c2;outline-offset:3px}
     .entry-editor button:disabled{opacity:.5;cursor:wait}.entry-editor .ee-main{padding:22px 24px}.entry-editor .ee-note{margin:0 0 20px;padding:10px 12px;border:1px solid #66877d66;border-radius:9px;color:#bdcec4;font-size:11px;background:#ffffff05}
+    .entry-editor .ee-related{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 16px;font-size:11px}.entry-editor .ee-related button{white-space:normal;overflow-wrap:anywhere}.entry-editor .ee-related button[aria-current=page]{background:#2c6756}
     .entry-editor .ee-label{display:block;margin-bottom:7px;font-weight:bold}.entry-editor textarea{width:100%;min-height:200px;resize:vertical;background:#0002;color:inherit;border:1px solid #66877d;border-radius:10px;padding:12px;font:inherit;line-height:1.65}
     .entry-editor .ee-images-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:22px 0 12px}.entry-editor h3{margin:0;font:700 17px Georgia,serif}.entry-editor .ee-upload input{position:absolute;width:1px;height:1px;opacity:0}
     .entry-editor .ee-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.entry-editor figure{margin:0;padding:9px;background:#ffffff06;border:1px solid #ffffff20;border-radius:11px;min-width:0}.entry-editor figure img{display:block;width:100%;height:140px;object-fit:contain;border-radius:6px;background:#0002}
@@ -43,6 +45,7 @@
   dialog.innerHTML = `
     <header><div><h2 id="ee-title"></h2><p class="ee-subtitle" id="ee-subtitle"></p></div><button type="button" class="ee-close" aria-label="Close entry">×</button></header>
     <div class="ee-main">
+      <nav class="ee-related" aria-label="Saved pages for this animal" hidden></nav>
       <p class="ee-note">Your writing and images are saved in this browser on this device. They are not published to GitHub. Download a backup to keep a copy or move your work to another browser.</p>
       <section class="ee-edit"><label class="ee-label" for="ee-text">Your information</label><textarea id="ee-text" placeholder="Write what you want people to know about this entry…"></textarea></section>
       <div class="ee-read-text" hidden></div>
@@ -162,11 +165,32 @@
     if (dirty && !window.confirm('Close without saving your changes?')) return;
     ++loadToken; dialog.close(); current = null; dirty = false; opener?.focus({ preventScroll: true });
   }
+  async function renderRelated(name) {
+    const nav = $('.ee-related'); nav.replaceChildren(); nav.hidden = true;
+    const group = groups.find(members => members.some(member => member.name === name));
+    if (!group) return;
+    const records = editing ? await Promise.all(group.map(member => get(member.name))) : [];
+    const available = group.filter((member, index) => index === 0 || member.name === name || records[index] || Object.hasOwn(config.entries || {}, member.name));
+    if (available.length < 2) return;
+    const label = document.createElement('span'); label.textContent = 'Saved pages:'; nav.append(label);
+    for (const member of available) {
+      const button = document.createElement('button'); button.type = 'button'; button.textContent = member.name;
+      if (member.name === name) button.setAttribute('aria-current', 'page');
+      button.addEventListener('click', () => {
+        if (busy || current?.name === member.name) return;
+        close();
+        if (!dialog.open) open(member.name, member.subtitle);
+      });
+      nav.append(button);
+    }
+    nav.hidden = false;
+  }
   async function open(name, subtitle = '') {
     if (dialog.open) return;
     opener = document.activeElement; const token = ++loadToken;
     name = canonical(name); current = { name, text: '', images: [] }; storedAtOpen = null; dirty = false;
     $('#ee-title').textContent = name; $('#ee-subtitle').textContent = subtitle;
+    $('.ee-related').replaceChildren(); $('.ee-related').hidden = true;
     $('.ee-edit').hidden = !editing; $('.ee-read-text').hidden = editing;
     for (const selector of ['.ee-note', '.ee-upload', '.ee-save', '.ee-export', '.ee-import']) $(selector).hidden = !editing;
     render(current); status(editing ? 'Loading saved work…' : ''); setBusy(true); dialog.showModal(); dialog.scrollTop = 0;
@@ -175,6 +199,7 @@
       if (token !== loadToken) return;
       const published = Object.hasOwn(config.entries || {}, name) ? config.entries[name] : null;
       render(local || { ...published, name }); storedAtOpen = local?.updatedAt || null;
+      await renderRelated(name);
       status(editing ? (local ? 'Saved work loaded from this browser.' : 'Ready for your text and images.') : '');
     } catch { if (token === loadToken) status('Browser storage is unavailable. You can still write and download a backup; Save will try again.', true); }
     finally { if (token === loadToken) { setBusy(false); if (editing) textarea.focus(); } }
@@ -196,6 +221,7 @@
       });
       storedAtOpen = record.updatedAt; current.updatedAt = record.updatedAt; dirty = false;
       $('.ee-time').textContent = `Last saved: ${new Date(record.updatedAt).toLocaleString()}`;
+      await renderRelated(current.name);
       status('Saved in this browser. Download a backup to keep another copy.');
     } catch { status('Could not save. Another tab may have changed this entry, or browser storage is full/unavailable. Download a backup before closing.', true); }
     finally { setBusy(false); }
@@ -249,6 +275,7 @@
       setBusy(true);
       await transaction('readwrite', store => { for (const record of records) store.put(record); });
       const record = await get(current.name); if (record) { render(record); storedAtOpen = record.updatedAt; }
+      await renderRelated(current.name);
       status(`Restored ${records.length} entries in this browser.`);
     } catch (error) { status(error.message || 'Could not restore that backup.', true); }
     finally { setBusy(false); }

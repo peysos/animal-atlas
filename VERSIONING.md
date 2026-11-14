@@ -16,7 +16,7 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 
 ## Current cycle — toward v6.1
 
-No pending separate single-entry additions.
+No pending separate single-entry additions. The 2026-11-14 cleanup of 50 repetitive family/genus pairs is a non-addition edit: version remains v6.0 and the counter remains 0/5.
 
 ## Completed release — v6.0
 

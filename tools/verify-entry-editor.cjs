@@ -6,7 +6,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
-const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'entry-editor.js', 'entry-content.js', 'favicon.svg']);
+const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'entry-editor.js', 'entry-content.js', 'entry-groups.js', 'favicon.svg']);
 
 (async () => {
   const browser = await chromium.launch({ headless: true, ...(process.env.ATLAS_CHROME_PATH ? { executablePath: process.env.ATLAS_CHROME_PATH } : {}) });
@@ -202,7 +202,68 @@ const files = new Set(['animal-evolution-tree.html', 'full-animal-tree.html', 'e
     const rescuePromise = blocked.waitForEvent('download'); await blocked.locator('.ee-export').click();
     const rescue = JSON.parse(await fs.readFile(await (await rescuePromise).path(), 'utf8'));
     assert.equal(rescue.entries[0].text, 'Rescue my draft');
+    // Combining repeated boxes must never rename or overwrite existing saved pages.
+    const groupContext = await browser.newContext({ acceptDownloads: true });
+    await groupContext.route('**/*', serve);
+    const grouped = await groupContext.newPage();
+    await grouped.goto('https://atlas.test/animal-evolution-tree.html');
+    assert.equal(await grouped.locator('.card[data-name="Apteryx"]').count(), 0);
+    assert.equal(await grouped.locator('.card[data-name="Apterygidae"]').count(), 1);
+    await open(grouped, 'Apterygidae');
+    assert.equal(await grouped.locator('.ee-related').isVisible(), false);
+    const groupBackup = JSON.stringify({ format: 'animal-atlas-entry-backup', schemaVersion: 1, entries: [
+      { name: 'Apterygidae', text: 'Family notes', images: [], updatedAt: '2026-01-01T00:00:00Z' },
+      { name: 'Apteryx', text: 'Original kiwi notes', images: [backup.entries[0].images[0]], updatedAt: '2026-01-02T00:00:00Z' }
+    ] });
+    grouped.once('dialog', d => d.accept());
+    await grouped.locator('#ee-backup').setInputFiles({ name: 'group.json', mimeType: 'application/json', buffer: Buffer.from(groupBackup) });
+    await grouped.waitForFunction(() => document.querySelector('.ee-status').textContent.startsWith('Restored'));
+    assert.equal(await grouped.locator('#ee-text').inputValue(), 'Family notes');
+    await grouped.getByRole('button', { name: 'Apteryx', exact: true }).click(); await ready(grouped);
+    assert.equal(await grouped.locator('#ee-title').innerText(), 'Apteryx');
+    assert.equal(await grouped.locator('#ee-text').inputValue(), 'Original kiwi notes');
+    assert.equal(await grouped.locator('.ee-caption').inputValue(), 'My credit');
+    await grouped.locator('#ee-text').fill('Updated kiwi notes'); await save(grouped);
+    await grouped.locator('#ee-text').fill('Unsaved kiwi draft');
+    grouped.once('dialog', d => d.dismiss());
+    await grouped.getByRole('button', { name: 'Apterygidae', exact: true }).click();
+    assert.equal(await grouped.locator('#ee-title').innerText(), 'Apteryx');
+    assert.equal(await grouped.locator('#ee-text').inputValue(), 'Unsaved kiwi draft');
+    grouped.once('dialog', d => d.accept());
+    await grouped.getByRole('button', { name: 'Apterygidae', exact: true }).click(); await ready(grouped);
+    assert.equal(await grouped.locator('#ee-text').inputValue(), 'Family notes');
+    const groupDownload = grouped.waitForEvent('download'); await grouped.locator('.ee-export').click();
+    const groupExport = await fs.readFile(await (await groupDownload).path(), 'utf8');
+    const groupedRecords = new Map(JSON.parse(groupExport).entries.map(record => [record.name, record]));
+    assert.equal(groupedRecords.get('Apteryx').text, 'Updated kiwi notes');
+    assert.deepEqual(groupedRecords.get('Apteryx').images, JSON.parse(groupBackup).entries[1].images);
+    assert.equal(groupedRecords.get('Apterygidae').text, 'Family notes');
+    await grouped.locator('.ee-close').click(); await grouped.reload(); await open(grouped, 'Apterygidae');
+    await grouped.getByRole('button', { name: 'Apteryx', exact: true }).click(); await ready(grouped);
+    assert.equal(await grouped.locator('#ee-text').inputValue(), 'Updated kiwi notes');
+    const groupedFull = await groupContext.newPage();
+    await groupedFull.goto('https://atlas.test/full-animal-tree.html'); await open(groupedFull, 'Apterygidae');
+    await groupedFull.getByRole('button', { name: 'Apteryx', exact: true }).click(); await ready(groupedFull);
+    assert.equal(await groupedFull.locator('#ee-text').inputValue(), 'Updated kiwi notes');
+    assert.equal(await groupedFull.locator('.ee-caption').inputValue(), 'My credit');
+    await phone.locator('.ee-close').click(); await open(phone, 'Apterygidae');
+    phone.once('dialog', d => d.accept());
+    await phone.locator('#ee-backup').setInputFiles({ name: 'group.json', mimeType: 'application/json', buffer: Buffer.from(groupExport) });
+    await phone.waitForFunction(() => document.querySelector('.ee-status').textContent.startsWith('Restored'));
+    await phone.getByRole('button', { name: 'Apteryx', exact: true }).tap(); await ready(phone);
+    assert.equal(await phone.locator('#ee-text').inputValue(), 'Updated kiwi notes');
+    assert.equal(await phone.locator('.entry-editor').evaluate(e => e.scrollWidth <= e.clientWidth), true);
+    const groupedReader = await groupContext.newPage();
+    await groupedReader.route('**/entry-content.js', route => route.fulfill({ body: 'window.ANIMAL_ATLAS_CONTENT=' + JSON.stringify({ editingEnabled: false, entries: { Apteryx: JSON.parse(groupBackup).entries[1] } }), contentType: 'application/javascript' }));
+    await groupedReader.goto('https://atlas.test/animal-evolution-tree.html'); await open(groupedReader, 'Apterygidae');
+    await groupedReader.getByRole('button', { name: 'Apteryx', exact: true }).click(); await ready(groupedReader);
+    assert.equal(await groupedReader.locator('.ee-read-text').innerText(), 'Original kiwi notes');
+    assert.equal(await groupedReader.locator('.ee-save').isVisible(), false);
+    assert.equal(await groupedReader.locator('.ee-images img').count(), 1);
+    assert.equal(await groupedReader.getByRole('button', { name: 'Apterygidae', exact: true }).isVisible(), true);
+    await groupedReader.getByRole('button', { name: 'Apterygidae', exact: true }).click(); await ready(groupedReader);
+    assert.equal(await groupedReader.locator('#ee-title').innerText(), 'Apterygidae');
     assert.deepEqual(errors, []);
-    console.log('PASS: selected-entry opening on desktop/D3/phone; single/multiple-image navigation, boundaries, captions, keyboard and arbitrary starting image on desktop/phone/read-only views; text/image save, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, removal, entry isolation, invalid import, safe text rendering, storage-failure recovery.');
+    console.log('PASS: selected-entry opening on desktop/D3/phone; single/multiple-image navigation, boundaries, captions, keyboard and arbitrary starting image on desktop/phone/read-only views; text/image save, reload, cross-view persistence, conflict/discard protection, backup/restore, phone layout, removal, entry isolation, invalid import, safe text rendering, storage-failure recovery; combined-box saved pages, original keys/images, backup/restore, unsaved switching and desktop/D3/phone/read-only access.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
