@@ -10,11 +10,17 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 
 ## Current state
 
-- Current version: **v5.9**
-- Pending separate single-entry requests: **2 / 5**
-- Next automatic single-entry version bump: **v6.0**, after three more qualifying requests. A batch request can trigger it sooner.
+- Current version: **v6.0**
+- Pending separate single-entry requests: **0 / 5**
+- Next automatic single-entry version bump: **v6.1**, after five more qualifying requests. A batch request can trigger it sooner.
 
-## Current cycle — toward v6.0
+## Current cycle — toward v6.1
+
+No pending separate single-entry additions.
+
+## Completed release — v6.0
+
+The 2026-11-14 request adds the entire suggested list plus Anurognathus as one batch: 21 new genera and 23 supporting family/order entries. This triggers exactly one +0.1 version bump to v6.0 and resets the counter to 0/5 toward v6.1. See docs/taxonomy-v6.0.md for all additions. The previous pending single-entry requests are retained below for history.
 
 | Count | Added entry | Request date |
 |---|---|---|
