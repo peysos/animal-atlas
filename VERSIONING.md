@@ -11,8 +11,14 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 ## Current state
 
 - Current version: **v5.9**
-- Pending separate single-entry requests: **0 / 5**
-- Next automatic single-entry version bump: **v6.0**, after five more qualifying requests. A batch request can trigger it sooner.
+- Pending separate single-entry requests: **1 / 5**
+- Next automatic single-entry version bump: **v6.0**, after four more qualifying requests. A batch request can trigger it sooner.
+
+## Current cycle — toward v6.0
+
+| Count | Added entry | Request date |
+|---|---|---|
+| 1 | Miracinonyx | 2026-11-14 |
 
 ## Completed release — v5.9
 
