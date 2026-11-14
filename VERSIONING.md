@@ -11,14 +11,15 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 ## Current state
 
 - Current version: **v6.0**
-- Pending separate single-entry requests: **1 / 5**
-- Next automatic single-entry version bump: **v6.1**, after four more qualifying requests. A batch request can trigger it sooner.
+- Pending separate single-entry requests: **2 / 5**
+- Next automatic single-entry version bump: **v6.1**, after three more qualifying requests. A batch request can trigger it sooner.
 
 ## Current cycle — toward v6.1
 
 | Count | Added entry | Request date |
 |---|---|---|
 | 1 | Arctocebus (angwantibos) | 2026-11-14 |
+| 2 | Rhacodactylus | 2026-11-14 |
 
 The earlier 2026-11-14 cleanup of 50 repetitive family/genus pairs did not advance the addition counter.
 
