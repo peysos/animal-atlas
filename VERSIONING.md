@@ -11,8 +11,8 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 ## Current state
 
 - Current version: **v6.0**
-- Pending separate single-entry requests: **2 / 5**
-- Next automatic single-entry version bump: **v6.1**, after three more qualifying requests. A batch request can trigger it sooner.
+- Pending separate single-entry requests: **4 / 5**
+- Next automatic single-entry version bump: **v6.1**, after one more qualifying request. A batch request can trigger it sooner.
 
 ## Current cycle — toward v6.1
 
@@ -20,6 +20,8 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 |---|---|---|
 | 1 | Arctocebus (angwantibos) | 2026-11-14 |
 | 2 | Rhacodactylus | 2026-11-14 |
+| 3 | Heracles | 2026-11-14 |
+| 4 | Palaeoloxodon | 2026-11-14 |
 
 The earlier 2026-11-14 cleanup of 50 repetitive family/genus pairs did not advance the addition counter.
 
