@@ -10,11 +10,17 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 
 ## Current state
 
-- Current version: **v6.0**
-- Pending separate single-entry requests: **4 / 5**
-- Next automatic single-entry version bump: **v6.1**, after one more qualifying request. A batch request can trigger it sooner.
+- Current version: **v6.1**
+- Pending separate single-entry requests: **0 / 5**
+- Next automatic single-entry version bump: **v6.2**, after five more qualifying requests. A batch request can trigger it sooner.
 
-## Current cycle — toward v6.1
+## Current cycle — toward v6.2
+
+No pending separate single-entry additions.
+
+## Completed cycle — v6.1
+
+Keichousaurus completes the five separate additions below, triggering one +0.1 bump to v6.1 and resetting the counter to 0/5 toward v6.2.
 
 | Count | Added entry | Request date |
 |---|---|---|
@@ -22,6 +28,7 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 | 2 | Rhacodactylus | 2026-11-14 |
 | 3 | Heracles | 2026-11-14 |
 | 4 | Palaeoloxodon | 2026-11-14 |
+| 5 | Keichousaurus | 2026-11-14 |
 
 The earlier 2026-11-14 cleanup of 50 repetitive family/genus pairs did not advance the addition counter.
 

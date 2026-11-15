@@ -1,6 +1,6 @@
 # HANDOFF — Animal Atlas Evolution Tree
 
-**Date of handoff:** 2026-11-14 · **Current version: v6.0**
+**Date of handoff:** 2026-11-14 · **Current version: v6.1**
 
 ## 1. Where the project is
 
@@ -29,7 +29,7 @@ Two synced interactive evolutionary-tree sites of animal life (plus context node
 - **Card site**: absolutely-positioned HTML cards + SVG elbow-path connectors (down → across the row gap → down, routed at `m=(p[4]+n[4])/2`). Search box with autocomplete (scientific names + rank word; common names via an alias map).
 - **D3 site**: `d3.stratify` + bezier links, `.n` nodes as `rect`s, same data, same search.
 
-**998 taxa / 997 links. No further removals without explicit consent; every retained node keeps a parent, exactly one root (LUCA).**
+**999 taxa / 998 links. No further removals without explicit consent; every retained node keeps a parent, exactly one root (LUCA).**
 
 ## 3. Data model
 
@@ -62,7 +62,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\serve-positions.ps1
 //   body: JSON.stringify(r.descendants().map(d=>({id:d.data.id,title:d.data.title,x:d.x,y:-d.y})))})
 # 3. generate the card file
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\rebuild-manual-full.ps1
-#    → must print: Manual nodes: 998 · Bad parent indices: 0 · Overlapping card pairs: 0
+#    → must print: Manual nodes: 999 · Bad parent indices: 0 · Overlapping card pairs: 0
 #      Only in manual: 0 · Only in D3: 0 · World: 53473 x 4400 · Root: LUCA parent=null
 # 4. cleanup (kills servers, DELETES positions.json)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\stop-animaltree-servers.ps1
@@ -74,10 +74,10 @@ Notes:
 ## 5. User rules (non-negotiable)
 
 1. **Never remove taxa without explicit consent.** Every retained entry stays connected; no orphans; one root. On 2026-11-14 the user explicitly requested simplifying repeated family/genus pairs across the chart. Fifty named genus boxes were removed, their family boxes retained, search redirected and original saved-page keys preserved via entry-groups.js. See docs/combined-entries-v6.0.md; do not expand this removal list automatically.
-2. **Version badge** follows [VERSIONING.md](VERSIONING.md): +0.1 after five separate single-entry addition requests, or exactly once per batch request. Supporting taxonomy nodes are not extra requested animals; duplicates and non-addition edits do not count. Explicit version requests take precedence. Current **v6.0**, counter **4 / 5** (Arctocebus / angwantibos, Rhacodactylus, Heracles, Palaeoloxodon), after the 2026-11-14 batch release. Next automatic +0.1 release is v6.1. Persist the ledger in VERSIONING.md and keep both badges/changelogs in sync.
-3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v6.0 &mdash;`).
+2. **Version badge** follows [VERSIONING.md](VERSIONING.md): +0.1 after five separate single-entry addition requests, or exactly once per batch request. Supporting taxonomy nodes are not extra requested animals; duplicates and non-addition edits do not count. Explicit version requests take precedence. Current **v6.1**, counter **0 / 5**, after Keichousaurus completed the five-request cycle on 2026-11-14. Next automatic +0.1 release is v6.2. Persist the ledger in VERSIONING.md and keep both badges/changelogs in sync.
+3. **Changelog**: clicking the badge opens a modal (closes via Close button, backdrop, or Escape). Every version gets a `What&rsquo;s new</h2><h3>vX.Y</h3>` section in **both** files. Insert newest before the current top section (`<h3>v6.1 &mdash;`).
 4. **Both files stay in full parity** (same taxa, titles, subtitles, ranks). The D3 file is the data source; the card file's `D` is generated.
-5. **After every change, verify on both live pages**: no console errors, 998 cards / 997 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
+5. **After every change, verify on both live pages**: no console errors, 999 cards / 998 links, 0 card-card overlaps, 0 line-through-card hits, one root, full title parity. See §8 snippets.
 6. Badge wording of ranks: see `kindName` in both files (must list identical words).
 
 ## 6. Rank & color system (v3.4)
@@ -114,13 +114,13 @@ Kind = `S` field 5 (or card `D[2]`) → CSS class + search-display word:
 
 **Accent field** (`S` field 6, card `D[6]`, appended to class name):
 - `a-arth` → **removed in v3.2 at the user's request** (0 rows, CSS deleted). Arthropods have no special border and show their normal rank colors. Don't re-add it unless asked.
-- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 238 rows: every extinct entry carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sauropterygia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition. **A group with living descendants must not be marked extinct** (Dinosauria, Therapsida, Cynodontia and Sphenacodontia are "... included" clades instead). Check on the D3 page: `r.descendants().filter(d=>d.data.accent==='a-ext'&&d.descendants().some(x=>x.data.accent!=='a-ext'))` must be empty, except Pakicetus and Ambulocetus (the whale line: they keep their red borders while Cetacea branches off them at the user's request) and, since v5.2, Australopithecus (it keeps its red border while Homo branches off it, also at the user's direction). The rank-order audit also flags Mysticeti and Odontoceti (suborders) and Perucetus (genus) inside Pakicetus (genus); that is expected for the same reason.
+- `a-ext` → **pure red border** (#ff0000, 2.5px in D3; 2px on cards). 239 rows: every extinct entry carries its TRUE rank kind + the red border (e.g. Tyrannosaurus = `genus+a-ext`, Trilobita = `class+a-ext`, Mosasauridae = `family+a-ext`, Sauropterygia = `clade+a-ext`). † prefix and "extinct …" wording kept for recognition. **A group with living descendants must not be marked extinct** (Dinosauria, Therapsida, Cynodontia and Sphenacodontia are "... included" clades instead). Check on the D3 page: `r.descendants().filter(d=>d.data.accent==='a-ext'&&d.descendants().some(x=>x.data.accent!=='a-ext'))` must be empty, except Pakicetus and Ambulocetus (the whale line: they keep their red borders while Cetacea branches off them at the user's request) and, since v5.2, Australopithecus (it keeps its red border while Homo branches off it, also at the user's direction). The rank-order audit also flags Mysticeti and Odontoceti (suborders) and Perucetus (genus) inside Pakicetus (genus); that is expected for the same reason.
 
 **Click behavior (v3.0, both sites) — user rule:** a border keeps its color whether clicked or not. Extinct entries always stay red; never turn a border white on click (v2.9 did this by misreading the request, and the user rejected it). Clicking adds `.active`, which shows a soft white glow outside the border until another entry is clicked; there is no toggle-off or click-background-to-clear. Hover must not change a border's color. Card site: `.card.active` sets the glow via `box-shadow` and a 2px border. D3 site: `G.on('click',…)` plus `.n.active rect`, which sets the glow via `filter:drop-shadow`.
 
-Current kind+accent census in `S` (998): blank 1·domain 3·kingdom 2·clade 33·root 1·phylum 14·class 29·genus 290·genus+a-ext 152·clade+a-ext 5·class+a-ext 2·family 262·subphylum 7·superorder 3·order+a-ext 15·family+a-ext 62·suborder+a-ext 1·order 101·suborder 4·subfamily 2·tribe 2·subtribe 1·infraclass 2·subclass 3·subclass+a-ext 1 (blank = LUCA).
+Current kind+accent census in `S` (999): blank 1·domain 3·kingdom 2·clade 33·root 1·phylum 14·class 29·genus 290·genus+a-ext 153·clade+a-ext 5·class+a-ext 2·family 262·subphylum 7·superorder 3·order+a-ext 15·family+a-ext 62·suborder+a-ext 1·order 101·suborder 4·subfamily 2·tribe 2·subtribe 1·infraclass 2·subclass 3·subclass+a-ext 1 (blank = LUCA).
 
-**Card name sizing (v5.5):** `fitCardNames()` measures the bold name (including an extinct dagger) with the rendered font and widens only cards that need it. Base widths remain 104px for families and 124px for other ranks; names stay on one line while subtitles wrap naturally. It runs after card creation and again after fonts are ready. The rebuild preserves this hand-maintained code. Verified all 998 names fit, with no card overlaps or connector crossings.
+**Card name sizing (v5.5):** `fitCardNames()` measures the bold name (including an extinct dagger) with the rendered font and widens only cards that need it. Base widths remain 104px for families and 124px for other ranks; names stay on one line while subtitles wrap naturally. It runs after card creation and again after fonts are ready. The rebuild preserves this hand-maintained code. Verified all 999 names fit, with no card overlaps or connector crossings.
 
 **Layout (v4.1):** the D3 tree spaces neighbours by their own box width, `d3.tree().nodeSize([1,150]).separation((a,b)=>(Math.max(a.data.w,140)+Math.max(b.data.w,140))/2+(a.parent===b.parent?24:56))`, not by the widest box. The 140 minimum keeps the card site's 124px cards from overlapping. Children stay in alphabetical order; sorting by subtree size shortened the longest lines slightly but made the tree about 40% wider.
 
@@ -185,6 +185,9 @@ Parity check: `r.descendants().map(d=>d.data.title).sort()` (D3) vs `[...new Set
 9. **PowerShell functions return everything they print.** A helper that prints a status string and then returns text hands back both, and writing that result puts the status text at the top of the file. Use `Write-Host` for messages inside such helpers, and check that the file still starts with `<!doctype html>` before moving on.
 
 ## 10. Version history
+
+- **v6.1 (2026-11-14, completed five-request cycle)** — added Keichousaurus (small Triassic marine reptile) directly under existing Sauropterygia. Placement follows [the digital anatomical study](https://pmc.ncbi.nlm.nih.gov/articles/PMC11967422/) and [pachypleurosaur research](https://pmc.ncbi.nlm.nih.gov/articles/PMC9072359/). Family-level keichousaurid relationships vary among analyses; no additional repetitive single-child family/clade chain is added, following the compact-chart preference. Existing extinct-genus colors and red border/dagger retained; aliases include Keichousaurus hui and pachypleurosaur. This fifth separate request completes Arctocebus, Rhacodactylus, Heracles, Palaeoloxodon, Keichousaurus: one +0.1 bump to v6.1; counter resets to 0/5 toward v6.2. 999 taxa / 998 links; card world stays 53473 x 4400. Both charts match, no existing entries removed/renamed/reparented, no overlaps/clipped card names/card connector crossings, one LUCA root, no runtime errors, eight new search checks and synchronized release notes. Shared editor/config/combined-entry mappings and saved-content keys unchanged; editor regression checks pass.
+
 
 - **v6.0 additions (2026-11-14, counters 3/5 and 4/5)** — two separate single-entry user messages added Heracles (giant New Zealand parrot) under existing Psittaciformes, then Palaeoloxodon (straight-tusked elephants) under existing Elephantidae. Heracles is left unassigned to a family, following the [original description](https://pmc.ncbi.nlm.nih.gov/articles/PMC6731479/), which explicitly could not establish family relationships; later broad New Zealand family treatments vary. Palaeoloxodon placement follows [elephant genomic research](https://pmc.ncbi.nlm.nih.gov/articles/PMC5461109/) and [the Chinese straight-tusked elephant study](https://pmc.ncbi.nlm.nih.gov/articles/PMC10353889/). The genus includes giant mainland and dwarf island species; no universal giant-size claim is made for every species. Both genera use true genus rank colors with extinct red borders and daggers. Synced aliases include Heracles inexpectatus, Hercules parrot, St Bathans giant parrot, giant elephants, Palaeoloxodon namadicus and P. antiquus. 998 taxa / 997 links; card world 53473 x 4400. Both charts match, no existing entries removed/renamed/reparented, no overlaps/clipped card names/card connector crossings, one LUCA root, no runtime errors, searches/release notes synchronized. Editor regression tests pass; editor/config/combined-entry mappings and saved-content keys unchanged. Version remains v6.0; these are two separate single-entry requests under VERSIONING.md, bringing the counter to 4/5 rather than a multi-animal message triggering a batch release. One more qualifying request triggers v6.1.
 
