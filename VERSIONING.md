@@ -10,13 +10,17 @@ User rule, effective 2026-11-12. This replaces the earlier rule that every versi
 
 ## Current state
 
-- Current version: **v6.1**
+- Current version: **v6.2**
 - Pending separate single-entry requests: **0 / 5**
-- Next automatic single-entry version bump: **v6.2**, after five more qualifying requests. A batch request can trigger it sooner.
+- Next automatic single-entry version bump: **v6.3**, after five more qualifying requests. A batch request can trigger it sooner.
 
-## Current cycle — toward v6.2
+## Current cycle — toward v6.3
 
 No pending separate single-entry additions.
+
+## Completed release — v6.2
+
+The 2026-11-19 batch request added Protocetus and Eobasileus (requested as eobasilieus). This triggers exactly one +0.1 bump to v6.2 and resets the separate-entry counter to 0/5 toward v6.3.
 
 ## Completed cycle — v6.1
 
